@@ -17,7 +17,7 @@ export async function getCurrentUser(): Promise<ApiResult<AppUser | null>> {
     data: {
       id: user.id,
       email: user.email ?? null,
-      fullName: (user.user_metadata?.full_name as string | undefined) ?? null,
+      fullName: (user.user_metadata?.["full_name"] as string | undefined) ?? null,
     },
     error: null,
   };
