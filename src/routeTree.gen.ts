@@ -16,6 +16,10 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as SellerRouteImport } from './routes/seller'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminModerationRouteImport } from './routes/admin.moderation'
+import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as DashboardOrdersRouteImport } from './routes/dashboard.orders'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard.settings'
@@ -59,6 +63,26 @@ const SellerRoute = SellerRouteImport.update({
   id: '/seller',
   path: '/seller',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminModerationRoute = AdminModerationRouteImport.update({
+  id: '/moderation',
+  path: '/moderation',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRoute,
 } as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
@@ -104,32 +128,39 @@ const SellerSettingsRoute = SellerSettingsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/marketplace': typeof MarketplaceRoute
   '/seller': typeof SellerRouteWithChildren
+  '/admin/moderation': typeof AdminModerationRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/dashboard/orders': typeof DashboardOrdersRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/wishlist': typeof DashboardWishlistRoute
   '/seller/inventory': typeof SellerInventoryRoute
   '/seller/payouts': typeof SellerPayoutsRoute
   '/seller/settings': typeof SellerSettingsRoute
+  '/admin/': typeof AdminIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/seller/': typeof SellerIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
   '/marketplace': typeof MarketplaceRoute
+  '/admin/moderation': typeof AdminModerationRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/dashboard/orders': typeof DashboardOrdersRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/wishlist': typeof DashboardWishlistRoute
   '/seller/inventory': typeof SellerInventoryRoute
   '/seller/payouts': typeof SellerPayoutsRoute
   '/seller/settings': typeof SellerSettingsRoute
+  '/admin': typeof AdminIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/seller': typeof SellerIndexRoute
 }
@@ -137,17 +168,21 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/marketplace': typeof MarketplaceRoute
   '/seller': typeof SellerRouteWithChildren
+  '/admin/moderation': typeof AdminModerationRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/dashboard/orders': typeof DashboardOrdersRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/wishlist': typeof DashboardWishlistRoute
   '/seller/inventory': typeof SellerInventoryRoute
   '/seller/payouts': typeof SellerPayoutsRoute
   '/seller/settings': typeof SellerSettingsRoute
+  '/admin/': typeof AdminIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/seller/': typeof SellerIndexRoute
 }
@@ -161,27 +196,34 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/marketplace'
     | '/seller'
+    | '/admin/moderation'
+    | '/admin/settings'
+    | '/admin/users'
     | '/dashboard/orders'
     | '/dashboard/settings'
     | '/dashboard/wishlist'
     | '/seller/inventory'
     | '/seller/payouts'
     | '/seller/settings'
+    | '/admin/'
     | '/dashboard/'
     | '/seller/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
-    | '/admin'
     | '/contact'
     | '/marketplace'
+    | '/admin/moderation'
+    | '/admin/settings'
+    | '/admin/users'
     | '/dashboard/orders'
     | '/dashboard/settings'
     | '/dashboard/wishlist'
     | '/seller/inventory'
     | '/seller/payouts'
     | '/seller/settings'
+    | '/admin'
     | '/dashboard'
     | '/seller'
   id:
@@ -193,12 +235,16 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/marketplace'
     | '/seller'
+    | '/admin/moderation'
+    | '/admin/settings'
+    | '/admin/users'
     | '/dashboard/orders'
     | '/dashboard/settings'
     | '/dashboard/wishlist'
     | '/seller/inventory'
     | '/seller/payouts'
     | '/seller/settings'
+    | '/admin/'
     | '/dashboard/'
     | '/seller/'
   fileRoutesById: FileRoutesById
@@ -206,7 +252,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  AdminRoute: typeof AdminRoute
+  AdminRoute: typeof AdminRouteWithChildren
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRouteWithChildren
   MarketplaceRoute: typeof MarketplaceRoute
@@ -263,6 +309,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/seller'
       preLoaderRoute: typeof SellerRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/moderation': {
+      id: '/admin/moderation'
+      path: '/moderation'
+      fullPath: '/admin/moderation'
+      preLoaderRoute: typeof AdminModerationRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/dashboard/': {
       id: '/dashboard/'
@@ -323,6 +397,22 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdminRouteChildren {
+  AdminModerationRoute: typeof AdminModerationRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminUsersRoute: typeof AdminUsersRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminModerationRoute: AdminModerationRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminUsersRoute: AdminUsersRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 interface DashboardRouteChildren {
   DashboardOrdersRoute: typeof DashboardOrdersRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
@@ -361,7 +451,7 @@ const SellerRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  AdminRoute: AdminRoute,
+  AdminRoute: AdminRouteWithChildren,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRouteWithChildren,
   MarketplaceRoute: MarketplaceRoute,
