@@ -10,7 +10,7 @@ const sellerNav: NavItem[] = [
   { label: "Settings", to: "/seller/settings", icon: Settings },
 ];
 
-export const Route = createFileRoute("/seller")({
+export const Route = createFileRoute("/_authenticated/seller")({
   component: SellerDashboardLayout,
 });
 

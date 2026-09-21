@@ -10,7 +10,7 @@ const adminNav: NavItem[] = [
   { label: "Settings", to: "/admin/settings", icon: Settings },
 ];
 
-export const Route = createFileRoute("/admin")({
+export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminDashboardLayout,
 });
 

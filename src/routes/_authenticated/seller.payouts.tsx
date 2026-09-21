@@ -3,7 +3,7 @@ import { Receipt } from "lucide-react";
 import { PageHeader } from "@/components/common/page-header";
 import { EmptyState } from "@/components/common/states";
 
-export const Route = createFileRoute("/seller/payouts")({
+export const Route = createFileRoute("/_authenticated/seller/payouts")({
   head: () => ({
     meta: [
       { title: "Payouts — AfghanBazaar Seller" },

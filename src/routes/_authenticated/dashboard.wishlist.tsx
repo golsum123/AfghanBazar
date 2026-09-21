@@ -3,7 +3,7 @@ import { Heart } from "lucide-react";
 import { PageHeader } from "@/components/common/page-header";
 import { EmptyState } from "@/components/common/states";
 
-export const Route = createFileRoute("/dashboard/wishlist")({
+export const Route = createFileRoute("/_authenticated/dashboard/wishlist")({
   head: () => ({
     meta: [
       { title: "Wishlist — AfghanBazaar" },
