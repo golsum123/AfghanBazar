@@ -3,7 +3,7 @@ import { ShieldCheck } from "lucide-react";
 import { PageHeader } from "@/components/common/page-header";
 import { EmptyState } from "@/components/common/states";
 
-export const Route = createFileRoute("/admin/moderation")({
+export const Route = createFileRoute("/_authenticated/admin/moderation")({
   head: () => ({
     meta: [
       { title: "Moderation — AfghanBazaar Admin" },

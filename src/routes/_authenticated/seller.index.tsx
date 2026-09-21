@@ -6,7 +6,7 @@ import { EmptyState } from "@/components/common/states";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-export const Route = createFileRoute("/seller/")({
+export const Route = createFileRoute("/_authenticated/seller/")({
   head: () => ({
     meta: [
       { title: "Seller portal — AfghanBazaar" },

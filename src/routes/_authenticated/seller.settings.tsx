@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export const Route = createFileRoute("/seller/settings")({
+export const Route = createFileRoute("/_authenticated/seller/settings")({
   head: () => ({
     meta: [
       { title: "Shop settings — AfghanBazaar Seller" },
