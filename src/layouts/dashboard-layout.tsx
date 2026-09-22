@@ -1,5 +1,7 @@
 import { useState, type ReactNode } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Bell, Menu, User } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 import { DashboardSidebarNav } from "@/components/layout/dashboard-sidebar";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
