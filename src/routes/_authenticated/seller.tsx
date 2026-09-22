@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { Boxes, LayoutDashboard, Receipt, Settings } from "lucide-react";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
+import { RequireRole } from "@/components/auth/require-role";
 import type { NavItem } from "@/types";
 
 const sellerNav: NavItem[] = [
@@ -16,8 +17,10 @@ export const Route = createFileRoute("/_authenticated/seller")({
 
 function SellerDashboardLayout() {
   return (
-    <DashboardLayout workspace="Seller portal" items={sellerNav}>
-      <Outlet />
-    </DashboardLayout>
+    <RequireRole allow={["seller"]}>
+      <DashboardLayout workspace="Seller portal" items={sellerNav}>
+        <Outlet />
+      </DashboardLayout>
+    </RequireRole>
   );
 }

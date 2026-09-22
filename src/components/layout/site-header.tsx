@@ -1,8 +1,18 @@
-import { Link } from "@tanstack/react-router";
-import { Menu, LayoutDashboard } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { Menu, LayoutDashboard, LogOut, User } from "lucide-react";
 import { Brand } from "@/components/common/brand";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/hooks/use-auth";
 import type { NavItem } from "@/types";
 
 const publicNav: NavItem[] = [
@@ -13,6 +23,23 @@ const publicNav: NavItem[] = [
 ];
 
 export function SiteHeader() {
+  const { session, profile, roles, loading, signOut } = useAuth();
+  const navigate = useNavigate();
+  const signedIn = Boolean(session);
+
+  const workspacePath = roles.includes("admin")
+    ? "/admin"
+    : roles.includes("crm_staff")
+      ? "/crm"
+      : roles.includes("seller")
+        ? "/seller"
+        : "/dashboard";
+
+  async function handleSignOut() {
+    await signOut();
+    await navigate({ to: "/", replace: true });
+  }
+
   return (
     <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur">
       <div className="container-page flex h-16 items-center justify-between gap-4">
@@ -33,15 +60,48 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
-          <Button asChild variant="ghost" size="sm">
-            <Link to="/seller">Sell on AfghanBazaar</Link>
-          </Button>
-          <Button asChild size="sm">
-            <Link to="/dashboard">
-              <LayoutDashboard className="size-4" />
-              My account
-            </Link>
-          </Button>
+          {loading ? null : signedIn ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" aria-label="Account menu">
+                  <Avatar className="size-8">
+                    <AvatarFallback>
+                      <User className="size-4" />
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel className="truncate">
+                  {profile?.full_name || profile?.email || "My account"}
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to={workspacePath}>My workspace</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/dashboard/settings">Profile settings</Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={() => void handleSignOut()}>
+                  <LogOut className="size-4" />
+                  Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <>
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/auth">Sign in</Link>
+              </Button>
+              <Button asChild size="sm">
+                <Link to="/auth">
+                  <LayoutDashboard className="size-4" />
+                  Create account
+                </Link>
+              </Button>
+            </>
+          )}
         </div>
 
         <Sheet>
@@ -65,12 +125,25 @@ export function SiteHeader() {
                 </Link>
               ))}
               <div className="mt-4 flex flex-col gap-2 border-t pt-4">
-                <Button asChild variant="outline" size="sm">
-                  <Link to="/seller">Seller portal</Link>
-                </Button>
-                <Button asChild size="sm">
-                  <Link to="/dashboard">My account</Link>
-                </Button>
+                {signedIn ? (
+                  <>
+                    <Button asChild variant="outline" size="sm">
+                      <Link to={workspacePath}>My workspace</Link>
+                    </Button>
+                    <Button size="sm" onClick={() => void handleSignOut()}>
+                      Sign out
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button asChild variant="outline" size="sm">
+                      <Link to="/auth">Sign in</Link>
+                    </Button>
+                    <Button asChild size="sm">
+                      <Link to="/auth">Create account</Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </SheetContent>

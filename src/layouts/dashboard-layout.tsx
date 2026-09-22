@@ -1,5 +1,7 @@
 import { useState, type ReactNode } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Bell, Menu, User } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 import { DashboardSidebarNav } from "@/components/layout/dashboard-sidebar";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -24,6 +26,15 @@ export function DashboardLayout({
   children: ReactNode;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { profile, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  async function handleSignOut() {
+    await signOut();
+    await navigate({ to: "/auth", replace: true });
+  }
+
+
 
   return (
     <div className="flex min-h-screen bg-muted/40">
@@ -68,11 +79,15 @@ export function DashboardLayout({
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuLabel>Guest account</DropdownMenuLabel>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel className="truncate">
+                  {profile?.full_name || profile?.email || "My account"}
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem disabled>Profile</DropdownMenuItem>
-                <DropdownMenuItem disabled>Sign out</DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/dashboard/settings">Profile</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => void handleSignOut()}>Sign out</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
