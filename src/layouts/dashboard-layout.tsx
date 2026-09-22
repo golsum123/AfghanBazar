@@ -68,11 +68,15 @@ export function DashboardLayout({
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuLabel>Guest account</DropdownMenuLabel>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel className="truncate">
+                  {profile?.full_name || profile?.email || "My account"}
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem disabled>Profile</DropdownMenuItem>
-                <DropdownMenuItem disabled>Sign out</DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/dashboard/settings">Profile</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => void handleSignOut()}>Sign out</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
