@@ -26,6 +26,15 @@ export function DashboardLayout({
   children: ReactNode;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { profile, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  async function handleSignOut() {
+    await signOut();
+    await navigate({ to: "/auth", replace: true });
+  }
+
+
 
   return (
     <div className="flex min-h-screen bg-muted/40">
