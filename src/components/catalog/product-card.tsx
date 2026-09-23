@@ -11,9 +11,9 @@ export function ProductCard({
   categoryName,
 }: {
   product: Product;
-  imageUrl?: string;
-  storeName?: string;
-  categoryName?: string;
+  imageUrl?: string | undefined;
+  storeName?: string | undefined;
+  categoryName?: string | undefined;
 }) {
   const available = isAvailable(product);
   return (
