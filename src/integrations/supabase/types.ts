@@ -14,6 +14,134 @@ export type Database = {
   }
   public: {
     Tables: {
+      categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      product_images: {
+        Row: {
+          created_at: string
+          id: string
+          position: number
+          product_id: string
+          storage_path: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          position?: number
+          product_id: string
+          storage_path: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          position?: number
+          product_id?: string
+          storage_path?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_images_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          category_id: string | null
+          country_of_origin: Database["public"]["Enums"]["origin_country"]
+          created_at: string
+          currency: Database["public"]["Enums"]["currency_code"]
+          description: string | null
+          id: string
+          name: string
+          price: number
+          seller_id: string
+          status: Database["public"]["Enums"]["product_status"]
+          stock_quantity: number
+          updated_at: string
+          weight: number | null
+        }
+        Insert: {
+          category_id?: string | null
+          country_of_origin: Database["public"]["Enums"]["origin_country"]
+          created_at?: string
+          currency?: Database["public"]["Enums"]["currency_code"]
+          description?: string | null
+          id?: string
+          name: string
+          price: number
+          seller_id: string
+          status?: Database["public"]["Enums"]["product_status"]
+          stock_quantity?: number
+          updated_at?: string
+          weight?: number | null
+        }
+        Update: {
+          category_id?: string | null
+          country_of_origin?: Database["public"]["Enums"]["origin_country"]
+          created_at?: string
+          currency?: Database["public"]["Enums"]["currency_code"]
+          description?: string | null
+          id?: string
+          name?: string
+          price?: number
+          seller_id?: string
+          status?: Database["public"]["Enums"]["product_status"]
+          stock_quantity?: number
+          updated_at?: string
+          weight?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -53,6 +181,56 @@ export type Database = {
         }
         Relationships: []
       }
+      seller_profiles: {
+        Row: {
+          approval_status: Database["public"]["Enums"]["approval_status"]
+          city: string | null
+          country: Database["public"]["Enums"]["origin_country"] | null
+          created_at: string
+          description: string | null
+          id: string
+          logo_url: string | null
+          phone: string | null
+          store_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          approval_status?: Database["public"]["Enums"]["approval_status"]
+          city?: string | null
+          country?: Database["public"]["Enums"]["origin_country"] | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          phone?: string | null
+          store_name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          approval_status?: Database["public"]["Enums"]["approval_status"]
+          city?: string | null
+          country?: Database["public"]["Enums"]["origin_country"] | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          phone?: string | null
+          store_name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seller_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -86,9 +264,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_approved_seller: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "customer" | "seller" | "admin" | "crm_staff"
+      approval_status: "pending" | "approved" | "rejected"
+      currency_code: "AFN" | "INR"
+      origin_country: "Afghanistan" | "India"
+      product_status: "active" | "inactive" | "out_of_stock"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -217,6 +400,10 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["customer", "seller", "admin", "crm_staff"],
+      approval_status: ["pending", "approved", "rejected"],
+      currency_code: ["AFN", "INR"],
+      origin_country: ["Afghanistan", "India"],
+      product_status: ["active", "inactive", "out_of_stock"],
     },
   },
 } as const
