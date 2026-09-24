@@ -96,7 +96,7 @@ function InventoryPage() {
     if (!user) return;
     const price = Number(form.price);
     const stock = Number.parseInt(form.stock_quantity, 10);
-    if (!form.name.trim() || !(price >= 0) || !(stock >= 0)) return toast.error("Check name, price and stock");
+    if (!form.name.trim() || !(price >= 0) || !(stock >= 0)) { toast.error("Check name, price and stock"); return; }
     setSaving(true);
     const { data, error } = await supabase
       .from("products")
@@ -116,7 +116,7 @@ function InventoryPage() {
       .single();
     if (error) {
       setSaving(false);
-      return toast.error(error.message);
+      { toast.error(error.message); return; }
     }
     try {
       await uploadProductImages(user.id, data.id, files);
@@ -133,7 +133,7 @@ function InventoryPage() {
 
   async function setStatus(id: string, status: ProductStatus) {
     const { error } = await supabase.from("products").update({ status }).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, status } : p)));
   }
 
@@ -141,7 +141,7 @@ function InventoryPage() {
     if (!confirm("Delete this product?")) return;
     const { data: imgs } = await supabase.from("product_images").select("storage_path").eq("product_id", id);
     const { error } = await supabase.from("products").delete().eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     if (imgs?.length) await supabase.storage.from("product-images").remove(imgs.map((i) => i.storage_path));
     setProducts((prev) => prev.filter((p) => p.id !== id));
     toast.success("Product deleted");

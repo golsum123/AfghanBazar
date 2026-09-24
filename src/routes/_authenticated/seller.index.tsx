@@ -67,7 +67,7 @@ function SellerOverview() {
 
   async function save(e: FormEvent) {
     e.preventDefault();
-    if (!user || !form.store_name.trim()) return toast.error("Store name is required");
+    if (!user || !form.store_name.trim()) { toast.error("Store name is required"); return; }
     setSaving(true);
     const payload = {
       store_name: form.store_name.trim(),
@@ -80,7 +80,7 @@ function SellerOverview() {
       ? await supabase.from("seller_profiles").update(payload).eq("id", store.id).select().single()
       : await supabase.from("seller_profiles").insert({ ...payload, user_id: user.id }).select().single();
     setSaving(false);
-    if (res.error) return toast.error(res.error.message);
+    if (res.error) { toast.error(res.error.message); return; }
     setStore(res.data);
     toast.success(store ? "Store profile updated" : "Store profile submitted for approval");
   }

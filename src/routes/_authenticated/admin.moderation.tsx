@@ -40,7 +40,7 @@ function ModerationPage() {
 
   async function decide(id: string, approval_status: "approved" | "rejected") {
     const { error } = await supabase.from("seller_profiles").update({ approval_status }).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     setSellers((prev) => prev.map((s) => (s.id === id ? { ...s, approval_status } : s)));
     toast.success(`Store ${approval_status}`);
   }
