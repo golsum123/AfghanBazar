@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, ImageOff, MapPin, ShoppingCart, Store } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { ArrowLeft, Heart, ImageOff, MapPin, ShoppingCart, Store } from "lucide-react";
+import { toast } from "sonner";
+import { useAuth } from "@/hooks/use-auth";
+import { useCart } from "@/hooks/use-cart";
 import { PublicLayout } from "@/layouts/public-layout";
 import { EmptyState, LoadingState } from "@/components/common/states";
 import { Badge } from "@/components/ui/badge";
@@ -34,6 +37,40 @@ export const Route = createFileRoute("/products/$productId")({
 
 function ProductPage() {
   const { productId } = Route.useParams();
+  const { user } = useAuth();
+  const { addToCart, toggleWishlist, wishlistIds } = useCart();
+  const navigate = useNavigate();
+  const [busy, setBusy] = useState(false);
+  const saved = wishlistIds.has(productId);
+
+  function requireLogin() {
+    if (user) return false;
+    void navigate({ to: "/auth", search: { redirect: `/products/${productId}` } });
+    return true;
+  }
+
+  async function handleAdd() {
+    if (requireLogin()) return;
+    setBusy(true);
+    try {
+      await addToCart(productId, 1);
+      toast.success("Added to cart");
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleWishlist() {
+    if (requireLogin()) return;
+    try {
+      const now = await toggleWishlist(productId);
+      toast.success(now ? "Saved to wishlist" : "Removed from wishlist");
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  }
   const [product, setProduct] = useState<Product | null>(null);
   const [category, setCategory] = useState<Category | null>(null);
   const [store, setStore] = useState<SellerProfile | null>(null);
@@ -150,11 +187,19 @@ function ProductPage() {
                 </div>
               </dl>
 
-              <div className="mt-6">
-                <Button size="lg" disabled className="w-full sm:w-auto">
-                  <ShoppingCart className="size-4" /> Add to cart
+              <div className="mt-6 flex flex-wrap gap-2">
+                <Button
+                  size="lg"
+                  disabled={!isAvailable(product) || busy}
+                  onClick={() => void handleAdd()}
+                  className="w-full sm:w-auto"
+                >
+                  <ShoppingCart className="size-4" /> {isAvailable(product) ? "Add to cart" : "Out of stock"}
                 </Button>
-                <p className="mt-2 text-xs text-muted-foreground">Cart and checkout are coming soon.</p>
+                <Button size="lg" variant="outline" onClick={() => void handleWishlist()} aria-pressed={saved}>
+                  <Heart className={cn("size-4", saved && "fill-current text-primary")} />
+                  {saved ? "Saved" : "Save to wishlist"}
+                </Button>
               </div>
 
               <Separator className="my-8" />
