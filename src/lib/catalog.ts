@@ -77,3 +77,24 @@ export async function uploadProductImages(userId: string, productId: string, fil
     if (error) throw error;
   }
 }
+
+/** Loads products by id plus a signed cover image URL for each. Hidden products are simply omitted by RLS. */
+export async function fetchProductsWithCovers(ids: string[]) {
+  if (ids.length === 0) return { products: {} as Record<string, Product>, covers: {} as Record<string, string> };
+  const { data } = await supabase
+    .from("products")
+    .select("*, product_images(storage_path, position)")
+    .in("id", ids);
+  const products: Record<string, Product> = {};
+  const coverPath: Record<string, string> = {};
+  for (const row of data ?? []) {
+    const { product_images, ...p } = row;
+    products[p.id] = p as Product;
+    const first = [...(product_images ?? [])].sort((a, b) => a.position - b.position)[0];
+    if (first) coverPath[p.id] = first.storage_path;
+  }
+  const signed = await signImagePaths(Object.values(coverPath));
+  const covers: Record<string, string> = {};
+  for (const [id, path] of Object.entries(coverPath)) if (signed[path]) covers[id] = signed[path];
+  return { products, covers };
+}

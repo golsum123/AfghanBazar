@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Menu, LayoutDashboard, LogOut, User } from "lucide-react";
+import { Menu, LayoutDashboard, LogOut, ShoppingCart, User } from "lucide-react";
+import { useCart } from "@/hooks/use-cart";
 import { Brand } from "@/components/common/brand";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -24,6 +25,7 @@ const publicNav: NavItem[] = [
 
 export function SiteHeader() {
   const { session, profile, roles, loading, signOut } = useAuth();
+  const { count: cartCount } = useCart();
   const navigate = useNavigate();
   const signedIn = Boolean(session);
 
@@ -58,6 +60,18 @@ export function SiteHeader() {
             </Link>
           ))}
         </nav>
+
+        <div className="ml-auto flex items-center gap-2 md:ml-0">
+        <Button asChild variant="ghost" size="icon" className="relative" aria-label={`Cart (${cartCount} items)`}>
+          <Link to="/cart">
+            <ShoppingCart className="size-5" />
+            {cartCount > 0 ? (
+              <span className="absolute -right-0.5 -top-0.5 flex min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold leading-5 text-primary-foreground">
+                {cartCount > 99 ? "99+" : cartCount}
+              </span>
+            ) : null}
+          </Link>
+        </Button>
 
         <div className="hidden items-center gap-2 md:flex">
           {loading ? null : signedIn ? (
@@ -102,6 +116,7 @@ export function SiteHeader() {
               </Button>
             </>
           )}
+        </div>
         </div>
 
         <Sheet>
