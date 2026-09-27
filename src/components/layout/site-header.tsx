@@ -61,7 +61,8 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <Button asChild variant="ghost" size="icon" className="relative ml-auto md:ml-0" aria-label={`Cart (${cartCount} items)`}>
+        <div className="ml-auto flex items-center gap-2 md:ml-0">
+        <Button asChild variant="ghost" size="icon" className="relative" aria-label={`Cart (${cartCount} items)`}>
           <Link to="/cart">
             <ShoppingCart className="size-5" />
             {cartCount > 0 ? (
@@ -115,6 +116,7 @@ export function SiteHeader() {
               </Button>
             </>
           )}
+        </div>
         </div>
 
         <Sheet>
