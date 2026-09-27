@@ -25,6 +25,7 @@ const publicNav: NavItem[] = [
 
 export function SiteHeader() {
   const { session, profile, roles, loading, signOut } = useAuth();
+  const { count: cartCount } = useCart();
   const navigate = useNavigate();
   const signedIn = Boolean(session);
 
