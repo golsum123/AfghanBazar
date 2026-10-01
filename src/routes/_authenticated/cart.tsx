@@ -141,7 +141,11 @@ function CartPage() {
                   {(Object.entries(totals) as [Currency, number][]).map(([cur, amt]) => (
                     <div key={cur} className="flex justify-between font-semibold"><span>Total ({cur})</span><span>{formatPrice(amt, cur)}</span></div>
                   ))}
-                  <Button className="w-full" disabled>Checkout coming soon</Button>
+                  {itemCount > 0 ? (
+                    <Button asChild className="w-full"><Link to="/checkout">Proceed to checkout</Link></Button>
+                  ) : (
+                    <Button className="w-full" disabled>Proceed to checkout</Button>
+                  )}
                 </CardContent>
               </Card>
             </div>
