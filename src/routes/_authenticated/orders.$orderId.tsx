@@ -12,7 +12,7 @@ import { formatPrice } from "@/lib/catalog";
 import { ORDER_STATUS_LABEL, orderNumber, statusVariant, type Order, type OrderItem } from "@/lib/orders";
 
 export const Route = createFileRoute("/_authenticated/orders/$orderId")({
-  validateSearch: (s: Record<string, unknown>): { placed?: boolean } => ({ placed: s["placed"] === true || s["placed"] === "true" ? true : undefined }),
+  validateSearch: (s: Record<string, unknown>): { placed?: boolean | undefined } => ({ placed: s["placed"] === true || s["placed"] === "true" ? true : undefined }),
   head: () => ({
     meta: [
       { title: "Order details — AfghanBazaar" },
