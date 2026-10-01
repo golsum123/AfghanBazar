@@ -86,6 +86,113 @@ export type Database = {
         }
         Relationships: []
       }
+      order_items: {
+        Row: {
+          created_at: string
+          currency: Database["public"]["Enums"]["currency_code"]
+          id: string
+          order_id: string
+          product_id: string | null
+          product_name: string
+          quantity: number
+          seller_id: string | null
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          currency: Database["public"]["Enums"]["currency_code"]
+          id?: string
+          order_id: string
+          product_id?: string | null
+          product_name: string
+          quantity: number
+          seller_id?: string | null
+          unit_price: number
+        }
+        Update: {
+          created_at?: string
+          currency?: Database["public"]["Enums"]["currency_code"]
+          id?: string
+          order_id?: string
+          product_id?: string | null
+          product_name?: string
+          quantity?: number
+          seller_id?: string | null
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          address: string
+          city: string
+          country: string
+          created_at: string
+          full_name: string
+          id: string
+          notes: string | null
+          phone: string
+          status: Database["public"]["Enums"]["order_status"]
+          total_afn: number
+          total_inr: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address: string
+          city: string
+          country: string
+          created_at?: string
+          full_name: string
+          id?: string
+          notes?: string | null
+          phone: string
+          status?: Database["public"]["Enums"]["order_status"]
+          total_afn?: number
+          total_inr?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string
+          city?: string
+          country?: string
+          created_at?: string
+          full_name?: string
+          id?: string
+          notes?: string | null
+          phone?: string
+          status?: Database["public"]["Enums"]["order_status"]
+          total_afn?: number
+          total_inr?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_images: {
         Row: {
           created_at: string
@@ -343,11 +450,29 @@ export type Database = {
         Returns: boolean
       }
       is_approved_seller: { Args: { _user_id: string }; Returns: boolean }
+      place_order: {
+        Args: {
+          _address: string
+          _city: string
+          _country: string
+          _full_name: string
+          _notes: string
+          _phone: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       app_role: "customer" | "seller" | "admin" | "crm_staff"
       approval_status: "pending" | "approved" | "rejected"
       currency_code: "AFN" | "INR"
+      order_status:
+        | "pending"
+        | "confirmed"
+        | "processing"
+        | "shipped"
+        | "delivered"
+        | "cancelled"
       origin_country: "Afghanistan" | "India"
       product_status: "active" | "inactive" | "out_of_stock"
     }
@@ -480,6 +605,14 @@ export const Constants = {
       app_role: ["customer", "seller", "admin", "crm_staff"],
       approval_status: ["pending", "approved", "rejected"],
       currency_code: ["AFN", "INR"],
+      order_status: [
+        "pending",
+        "confirmed",
+        "processing",
+        "shipped",
+        "delivered",
+        "cancelled",
+      ],
       origin_country: ["Afghanistan", "India"],
       product_status: ["active", "inactive", "out_of_stock"],
     },
