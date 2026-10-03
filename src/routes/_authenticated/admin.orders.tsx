@@ -61,6 +61,12 @@ function AdminOrdersPage() {
 
   async function openOrder(o: Order) {
     setOpen(o);
+    setDelivery({
+      method: o.delivery_method ?? "",
+      address: o.delivery_address ?? "",
+      tracking: o.tracking_number ?? "",
+      eta: o.estimated_delivery_date ?? "",
+    });
     setItems([]);
     setItemsLoading(true);
     const { data } = await supabase.from("order_items").select("*").eq("order_id", o.id).order("created_at");
