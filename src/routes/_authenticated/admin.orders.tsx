@@ -48,6 +48,8 @@ function AdminOrdersPage() {
   const [items, setItems] = useState<OrderItem[]>([]);
   const [itemsLoading, setItemsLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [delivery, setDelivery] = useState({ method: "", address: "", tracking: "", eta: "" });
+  const [savingDelivery, setSavingDelivery] = useState(false);
 
   useEffect(() => {
     void supabase.from("orders").select("*").order("created_at", { ascending: false }).then(({ data, error }) => {
