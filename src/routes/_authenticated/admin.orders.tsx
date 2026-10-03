@@ -85,6 +85,27 @@ function AdminOrdersPage() {
     toast.success(`Order marked ${ORDER_STATUS_LABEL[status]}`);
   }
 
+  async function saveDelivery() {
+    if (!open) return;
+    setSavingDelivery(true);
+    const { data, error } = await supabase
+      .from("orders")
+      .update({
+        delivery_method: delivery.method.trim() || null,
+        delivery_address: delivery.address.trim() || null,
+        tracking_number: delivery.tracking.trim() || null,
+        estimated_delivery_date: delivery.eta || null,
+      })
+      .eq("id", open.id)
+      .select()
+      .maybeSingle();
+    setSavingDelivery(false);
+    if (error || !data) { toast.error(error?.message ?? "Could not save delivery details"); return; }
+    setOpen(data);
+    setOrders((prev) => prev.map((o) => (o.id === data.id ? data : o)));
+    toast.success("Delivery details saved");
+  }
+
   return (
     <>
       <PageHeader title="Orders" description="All customer orders across the marketplace." />
