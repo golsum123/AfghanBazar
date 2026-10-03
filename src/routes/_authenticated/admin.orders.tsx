@@ -8,7 +8,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
@@ -45,6 +48,8 @@ function AdminOrdersPage() {
   const [items, setItems] = useState<OrderItem[]>([]);
   const [itemsLoading, setItemsLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [delivery, setDelivery] = useState({ method: "", address: "", tracking: "", eta: "" });
+  const [savingDelivery, setSavingDelivery] = useState(false);
 
   useEffect(() => {
     void supabase.from("orders").select("*").order("created_at", { ascending: false }).then(({ data, error }) => {
@@ -56,6 +61,12 @@ function AdminOrdersPage() {
 
   async function openOrder(o: Order) {
     setOpen(o);
+    setDelivery({
+      method: o.delivery_method ?? "",
+      address: o.delivery_address ?? "",
+      tracking: o.tracking_number ?? "",
+      eta: o.estimated_delivery_date ?? "",
+    });
     setItems([]);
     setItemsLoading(true);
     const { data } = await supabase.from("order_items").select("*").eq("order_id", o.id).order("created_at");
@@ -72,6 +83,27 @@ function AdminOrdersPage() {
     setOpen(data);
     setOrders((prev) => prev.map((o) => (o.id === data.id ? data : o)));
     toast.success(`Order marked ${ORDER_STATUS_LABEL[status]}`);
+  }
+
+  async function saveDelivery() {
+    if (!open) return;
+    setSavingDelivery(true);
+    const { data, error } = await supabase
+      .from("orders")
+      .update({
+        delivery_method: delivery.method.trim() || null,
+        delivery_address: delivery.address.trim() || null,
+        tracking_number: delivery.tracking.trim() || null,
+        estimated_delivery_date: delivery.eta || null,
+      })
+      .eq("id", open.id)
+      .select()
+      .maybeSingle();
+    setSavingDelivery(false);
+    if (error || !data) { toast.error(error?.message ?? "Could not save delivery details"); return; }
+    setOpen(data);
+    setOrders((prev) => prev.map((o) => (o.id === data.id ? data : o)));
+    toast.success("Delivery details saved");
   }
 
   return (
@@ -151,6 +183,54 @@ function AdminOrdersPage() {
                   <p>{open.city}, {open.country}</p>
                   {open.notes ? <p className="pt-1 text-muted-foreground">Notes: {open.notes}</p> : null}
                   <p className="pt-1 text-muted-foreground">Placed {new Date(open.created_at).toLocaleString()}</p>
+                </div>
+                <Separator />
+                <div className="space-y-3">
+                  <p className="font-medium">Delivery management</p>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="delivery-method">Delivery method</Label>
+                      <Input
+                        id="delivery-method"
+                        placeholder="e.g. Courier, Pickup, Post"
+                        value={delivery.method}
+                        onChange={(e) => setDelivery((d) => ({ ...d, method: e.target.value }))}
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="tracking-number">Tracking number (optional)</Label>
+                      <Input
+                        id="tracking-number"
+                        placeholder="e.g. AB-TRK-12345"
+                        value={delivery.tracking}
+                        onChange={(e) => setDelivery((d) => ({ ...d, tracking: e.target.value }))}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="delivery-address">Delivery address</Label>
+                    <Textarea
+                      id="delivery-address"
+                      rows={2}
+                      placeholder="Where the order should be delivered"
+                      value={delivery.address}
+                      onChange={(e) => setDelivery((d) => ({ ...d, address: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="delivery-eta">Estimated delivery date (optional)</Label>
+                    <Input
+                      id="delivery-eta"
+                      type="date"
+                      value={delivery.eta}
+                      onChange={(e) => setDelivery((d) => ({ ...d, eta: e.target.value }))}
+                    />
+                  </div>
+                  <div className="flex justify-end">
+                    <Button size="sm" onClick={() => void saveDelivery()} disabled={savingDelivery}>
+                      {savingDelivery ? "Saving…" : "Save delivery details"}
+                    </Button>
+                  </div>
                 </div>
               </div>
             </>
