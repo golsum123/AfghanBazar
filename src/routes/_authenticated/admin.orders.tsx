@@ -184,6 +184,54 @@ function AdminOrdersPage() {
                   {open.notes ? <p className="pt-1 text-muted-foreground">Notes: {open.notes}</p> : null}
                   <p className="pt-1 text-muted-foreground">Placed {new Date(open.created_at).toLocaleString()}</p>
                 </div>
+                <Separator />
+                <div className="space-y-3">
+                  <p className="font-medium">Delivery management</p>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="delivery-method">Delivery method</Label>
+                      <Input
+                        id="delivery-method"
+                        placeholder="e.g. Courier, Pickup, Post"
+                        value={delivery.method}
+                        onChange={(e) => setDelivery((d) => ({ ...d, method: e.target.value }))}
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="tracking-number">Tracking number (optional)</Label>
+                      <Input
+                        id="tracking-number"
+                        placeholder="e.g. AB-TRK-12345"
+                        value={delivery.tracking}
+                        onChange={(e) => setDelivery((d) => ({ ...d, tracking: e.target.value }))}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="delivery-address">Delivery address</Label>
+                    <Textarea
+                      id="delivery-address"
+                      rows={2}
+                      placeholder="Where the order should be delivered"
+                      value={delivery.address}
+                      onChange={(e) => setDelivery((d) => ({ ...d, address: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="delivery-eta">Estimated delivery date (optional)</Label>
+                    <Input
+                      id="delivery-eta"
+                      type="date"
+                      value={delivery.eta}
+                      onChange={(e) => setDelivery((d) => ({ ...d, eta: e.target.value }))}
+                    />
+                  </div>
+                  <div className="flex justify-end">
+                    <Button size="sm" onClick={() => void saveDelivery()} disabled={savingDelivery}>
+                      {savingDelivery ? "Saving…" : "Save delivery details"}
+                    </Button>
+                  </div>
+                </div>
               </div>
             </>
           ) : null}
