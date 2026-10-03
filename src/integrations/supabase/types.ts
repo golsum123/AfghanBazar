@@ -143,6 +143,9 @@ export type Database = {
           city: string
           country: string
           created_at: string
+          delivery_address: string | null
+          delivery_method: string | null
+          estimated_delivery_date: string | null
           full_name: string
           id: string
           notes: string | null
@@ -150,6 +153,7 @@ export type Database = {
           status: Database["public"]["Enums"]["order_status"]
           total_afn: number
           total_inr: number
+          tracking_number: string | null
           updated_at: string
           user_id: string
         }
@@ -158,6 +162,9 @@ export type Database = {
           city: string
           country: string
           created_at?: string
+          delivery_address?: string | null
+          delivery_method?: string | null
+          estimated_delivery_date?: string | null
           full_name: string
           id?: string
           notes?: string | null
@@ -165,6 +172,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["order_status"]
           total_afn?: number
           total_inr?: number
+          tracking_number?: string | null
           updated_at?: string
           user_id: string
         }
@@ -173,6 +181,9 @@ export type Database = {
           city?: string
           country?: string
           created_at?: string
+          delivery_address?: string | null
+          delivery_method?: string | null
+          estimated_delivery_date?: string | null
           full_name?: string
           id?: string
           notes?: string | null
@@ -180,6 +191,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["order_status"]
           total_afn?: number
           total_inr?: number
+          tracking_number?: string | null
           updated_at?: string
           user_id?: string
         }
