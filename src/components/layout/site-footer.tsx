@@ -58,13 +58,13 @@ export function SiteFooter() {
         <div>
           <h4 className="text-sm font-semibold">Project</h4>
           <p className="mt-3 text-sm text-muted-foreground">
-            Capstone Project — Phase 1: platform foundation, layouts and shared UI system.
+            Capstone Project – Developed using React.js
           </p>
         </div>
       </div>
       <div className="border-t">
         <div className="container-page flex flex-col gap-2 py-5 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} AfghanBazaar. All rights reserved.</p>
+          <p>© 2026 AfghanBazaar. All rights reserved.</p>
           <p>Kabul · New Delhi</p>
         </div>
       </div>

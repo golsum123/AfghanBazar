@@ -49,44 +49,58 @@ function OrdersPage() {
           {loading ? (
             <LoadingState label="Loading orders…" />
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Order</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Total</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {orders.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={4} className="p-0">
-                      <EmptyState
-                        className="rounded-none border-0"
-                        title="No orders yet"
-                        description="Your purchases will be listed here."
-                        action={<Button asChild><Link to="/marketplace">Browse marketplace</Link></Button>}
-                      />
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  orders.map((o) => (
-                    <TableRow key={o.id}>
-                      <TableCell>
-                        <Link to="/orders/$orderId" params={{ orderId: o.id }} className="font-medium hover:underline">{orderNumber(o.id)}</Link>
-                      </TableCell>
-                      <TableCell>{new Date(o.created_at).toLocaleDateString()}</TableCell>
-                      <TableCell><Badge variant={statusVariant(o.status)}>{ORDER_STATUS_LABEL[o.status]}</Badge></TableCell>
-                      <TableCell className="text-right">
-                        {[Number(o.total_afn) > 0 ? formatPrice(Number(o.total_afn), "AFN") : null, Number(o.total_inr) > 0 ? formatPrice(Number(o.total_inr), "INR") : null]
-                          .filter(Boolean)
-                          .join(" + ")}
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Order</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Delivery</TableHead>
+                      <TableHead className="text-right">Total</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                <TableBody>
+                  {orders.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="p-0">
+                        <EmptyState
+                          className="rounded-none border-0"
+                          title="No orders yet"
+                          description="Your purchases will be listed here."
+                          action={<Button asChild><Link to="/marketplace">Browse marketplace</Link></Button>}
+                        />
                       </TableCell>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
+                  ) : (
+                    orders.map((o) => (
+                      <TableRow key={o.id}>
+                        <TableCell>
+                          <Link to="/orders/$orderId" params={{ orderId: o.id }} className="font-medium hover:underline">{orderNumber(o.id)}</Link>
+                        </TableCell>
+                        <TableCell>{new Date(o.created_at).toLocaleDateString()}</TableCell>
+                        <TableCell><Badge variant={statusVariant(o.status)}>{ORDER_STATUS_LABEL[o.status]}</Badge></TableCell>
+                        <TableCell>
+                          {o.delivery_method || o.tracking_number || o.estimated_delivery_date ? (
+                            <div className="space-y-0.5 text-sm">
+                              {o.delivery_method ? <div>{o.delivery_method}</div> : null}
+                              {o.tracking_number ? <div className="text-muted-foreground">Tracking: {o.tracking_number}</div> : null}
+                              {o.estimated_delivery_date ? (
+                                <div className="text-muted-foreground">Est. {new Date(o.estimated_delivery_date).toLocaleDateString()}</div>
+                              ) : null}
+                            </div>
+                          ) : (
+                            <span className="text-sm text-muted-foreground">—</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {[Number(o.total_afn) > 0 ? formatPrice(Number(o.total_afn), "AFN") : null, Number(o.total_inr) > 0 ? formatPrice(Number(o.total_inr), "INR") : null]
+                            .filter(Boolean)
+                            .join(" + ")}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
             </Table>
           )}
         </CardContent>
