@@ -57,6 +57,13 @@
       "when": 1791047203795,
       "tag": "0007_add_order_delivery_fields",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1791292493130,
+      "tag": "0008_approved_sellers_manage_products",
+      "breakpoints": true
     }
   ]
 }
