@@ -35,8 +35,8 @@ import { Route as AuthenticatedDashboardSettingsRouteImport } from './routes/_au
 import { Route as AuthenticatedDashboardWishlistRouteImport } from './routes/_authenticated/dashboard.wishlist'
 import { Route as AuthenticatedOrdersOrderIdRouteImport } from './routes/_authenticated/orders.$orderId'
 import { Route as AuthenticatedSellerIndexRouteImport } from './routes/_authenticated/seller.index'
-import { Route as AuthenticatedSellerInventoryRouteImport } from './routes/_authenticated/seller.inventory'
 import { Route as AuthenticatedSellerPayoutsRouteImport } from './routes/_authenticated/seller.payouts'
+import { Route as AuthenticatedSellerProductsRouteImport } from './routes/_authenticated/seller.products'
 import { Route as AuthenticatedSellerSettingsRouteImport } from './routes/_authenticated/seller.settings'
 
 const IndexRoute = IndexRouteImport.update({
@@ -177,16 +177,16 @@ const AuthenticatedSellerIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedSellerRoute,
   } as any)
-const AuthenticatedSellerInventoryRoute =
-  AuthenticatedSellerInventoryRouteImport.update({
-    id: '/inventory',
-    path: '/inventory',
-    getParentRoute: () => AuthenticatedSellerRoute,
-  } as any)
 const AuthenticatedSellerPayoutsRoute =
   AuthenticatedSellerPayoutsRouteImport.update({
     id: '/payouts',
     path: '/payouts',
+    getParentRoute: () => AuthenticatedSellerRoute,
+  } as any)
+const AuthenticatedSellerProductsRoute =
+  AuthenticatedSellerProductsRouteImport.update({
+    id: '/products',
+    path: '/products',
     getParentRoute: () => AuthenticatedSellerRoute,
   } as any)
 const AuthenticatedSellerSettingsRoute =
@@ -218,8 +218,8 @@ export interface FileRoutesByFullPath {
   '/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
   '/dashboard/wishlist': typeof AuthenticatedDashboardWishlistRoute
   '/orders/$orderId': typeof AuthenticatedOrdersOrderIdRoute
-  '/seller/inventory': typeof AuthenticatedSellerInventoryRoute
   '/seller/payouts': typeof AuthenticatedSellerPayoutsRoute
+  '/seller/products': typeof AuthenticatedSellerProductsRoute
   '/seller/settings': typeof AuthenticatedSellerSettingsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/crm/': typeof AuthenticatedCrmIndexRoute
@@ -244,8 +244,8 @@ export interface FileRoutesByTo {
   '/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
   '/dashboard/wishlist': typeof AuthenticatedDashboardWishlistRoute
   '/orders/$orderId': typeof AuthenticatedOrdersOrderIdRoute
-  '/seller/inventory': typeof AuthenticatedSellerInventoryRoute
   '/seller/payouts': typeof AuthenticatedSellerPayoutsRoute
+  '/seller/products': typeof AuthenticatedSellerProductsRoute
   '/seller/settings': typeof AuthenticatedSellerSettingsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/crm': typeof AuthenticatedCrmIndexRoute
@@ -276,8 +276,8 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
   '/_authenticated/dashboard/wishlist': typeof AuthenticatedDashboardWishlistRoute
   '/_authenticated/orders/$orderId': typeof AuthenticatedOrdersOrderIdRoute
-  '/_authenticated/seller/inventory': typeof AuthenticatedSellerInventoryRoute
   '/_authenticated/seller/payouts': typeof AuthenticatedSellerPayoutsRoute
+  '/_authenticated/seller/products': typeof AuthenticatedSellerProductsRoute
   '/_authenticated/seller/settings': typeof AuthenticatedSellerSettingsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/crm/': typeof AuthenticatedCrmIndexRoute
@@ -308,8 +308,8 @@ export interface FileRouteTypes {
     | '/dashboard/settings'
     | '/dashboard/wishlist'
     | '/orders/$orderId'
-    | '/seller/inventory'
     | '/seller/payouts'
+    | '/seller/products'
     | '/seller/settings'
     | '/admin/'
     | '/crm/'
@@ -334,8 +334,8 @@ export interface FileRouteTypes {
     | '/dashboard/settings'
     | '/dashboard/wishlist'
     | '/orders/$orderId'
-    | '/seller/inventory'
     | '/seller/payouts'
+    | '/seller/products'
     | '/seller/settings'
     | '/admin'
     | '/crm'
@@ -365,8 +365,8 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/settings'
     | '/_authenticated/dashboard/wishlist'
     | '/_authenticated/orders/$orderId'
-    | '/_authenticated/seller/inventory'
     | '/_authenticated/seller/payouts'
+    | '/_authenticated/seller/products'
     | '/_authenticated/seller/settings'
     | '/_authenticated/admin/'
     | '/_authenticated/crm/'
@@ -569,18 +569,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSellerIndexRouteImport
       parentRoute: typeof AuthenticatedSellerRoute
     }
-    '/_authenticated/seller/inventory': {
-      id: '/_authenticated/seller/inventory'
-      path: '/inventory'
-      fullPath: '/seller/inventory'
-      preLoaderRoute: typeof AuthenticatedSellerInventoryRouteImport
-      parentRoute: typeof AuthenticatedSellerRoute
-    }
     '/_authenticated/seller/payouts': {
       id: '/_authenticated/seller/payouts'
       path: '/payouts'
       fullPath: '/seller/payouts'
       preLoaderRoute: typeof AuthenticatedSellerPayoutsRouteImport
+      parentRoute: typeof AuthenticatedSellerRoute
+    }
+    '/_authenticated/seller/products': {
+      id: '/_authenticated/seller/products'
+      path: '/products'
+      fullPath: '/seller/products'
+      preLoaderRoute: typeof AuthenticatedSellerProductsRouteImport
       parentRoute: typeof AuthenticatedSellerRoute
     }
     '/_authenticated/seller/settings': {
@@ -644,15 +644,15 @@ const AuthenticatedDashboardRouteWithChildren =
   )
 
 interface AuthenticatedSellerRouteChildren {
-  AuthenticatedSellerInventoryRoute: typeof AuthenticatedSellerInventoryRoute
   AuthenticatedSellerPayoutsRoute: typeof AuthenticatedSellerPayoutsRoute
+  AuthenticatedSellerProductsRoute: typeof AuthenticatedSellerProductsRoute
   AuthenticatedSellerSettingsRoute: typeof AuthenticatedSellerSettingsRoute
   AuthenticatedSellerIndexRoute: typeof AuthenticatedSellerIndexRoute
 }
 
 const AuthenticatedSellerRouteChildren: AuthenticatedSellerRouteChildren = {
-  AuthenticatedSellerInventoryRoute: AuthenticatedSellerInventoryRoute,
   AuthenticatedSellerPayoutsRoute: AuthenticatedSellerPayoutsRoute,
+  AuthenticatedSellerProductsRoute: AuthenticatedSellerProductsRoute,
   AuthenticatedSellerSettingsRoute: AuthenticatedSellerSettingsRoute,
   AuthenticatedSellerIndexRoute: AuthenticatedSellerIndexRoute,
 }
