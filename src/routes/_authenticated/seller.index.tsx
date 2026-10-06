@@ -94,7 +94,7 @@ function SellerOverview() {
         description="Your store profile and listings."
         actions={
           <Button asChild variant="outline">
-            <Link to="/seller/inventory">Manage products</Link>
+            <Link to="/seller/products">Manage products</Link>
           </Button>
         }
       />
