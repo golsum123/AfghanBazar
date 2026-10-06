@@ -55,7 +55,7 @@ const EMPTY = {
   category_id: "",
 };
 
-type Row = Product & { cover?: string; imagePaths: string[] };
+type Row = Product & { cover?: string | undefined; imagePaths: string[] };
 
 function ProductsPage() {
   const { user } = useAuth();
