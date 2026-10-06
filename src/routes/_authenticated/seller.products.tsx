@@ -84,7 +84,7 @@ function ProductsPage() {
       ...(p as Product),
       imagePaths: [...(product_images ?? [])].sort((a, b) => a.position - b.position).map((i) => i.storage_path),
     }));
-    const signed = await signImagePaths(rows.map((r) => r.imagePaths[0]).filter(Boolean));
+    const signed = await signImagePaths(rows.map((r) => r.imagePaths[0]).filter((x): x is string => !!x));
     setProducts(rows.map((r) => ({ ...r, cover: r.imagePaths[0] ? signed[r.imagePaths[0]] : undefined })));
     setLoading(false);
   }, [user]);
