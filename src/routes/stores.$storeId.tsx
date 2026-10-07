@@ -79,7 +79,7 @@ function StorePage() {
 
   return (
     <PublicLayout>
-      <section className="container mx-auto px-4 py-8">
+      <section className="container-page py-8">
         <Button asChild variant="ghost" size="sm" className="mb-4">
           <Link to="/marketplace">
             <ArrowLeft className="size-4" /> Back to marketplace
