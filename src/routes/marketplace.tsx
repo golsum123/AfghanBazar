@@ -187,6 +187,7 @@ function MarketplacePage() {
                   product={p}
                   imageUrl={images[p.id]}
                   storeName={stores[p.seller_id]?.store_name}
+                  storeId={stores[p.seller_id]?.id}
                   categoryName={p.category_id ? categoryName[p.category_id] : undefined}
                 />
               ))}

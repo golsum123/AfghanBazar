@@ -9,7 +9,9 @@ export function ProductCard({
   imageUrl,
   storeName,
   categoryName,
+  storeId,
 }: {
+  storeId?: string | undefined;
   product: Product;
   imageUrl?: string | undefined;
   storeName?: string | undefined;
@@ -17,8 +19,13 @@ export function ProductCard({
 }) {
   const available = isAvailable(product);
   return (
-    <Link to="/products/$productId" params={{ productId: product.id }} className="group">
-      <Card className="h-full overflow-hidden shadow-none transition-colors group-hover:border-primary/40">
+    <Card className="group relative h-full overflow-hidden shadow-none transition-colors hover:border-primary/40">
+        <Link
+          to="/products/$productId"
+          params={{ productId: product.id }}
+          aria-label={product.name}
+          className="absolute inset-0 z-0"
+        />
         <div className="aspect-[4/3] bg-muted">
           {imageUrl ? (
             <img src={imageUrl} alt={product.name} loading="lazy" className="size-full object-cover" />
@@ -40,7 +47,17 @@ export function ProductCard({
             {formatPrice(product.price, product.currency)}
           </p>
           <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
-            <span className="truncate">{storeName ?? "AfghanBazaar seller"}</span>
+            {storeId ? (
+              <Link
+                to="/stores/$storeId"
+                params={{ storeId }}
+                className="relative z-10 truncate hover:text-primary hover:underline"
+              >
+                {storeName ?? "AfghanBazaar seller"}
+              </Link>
+            ) : (
+              <span className="truncate">{storeName ?? "AfghanBazaar seller"}</span>
+            )}
             <span className="flex shrink-0 items-center gap-1">
               <MapPin className="size-3" />
               {product.country_of_origin}
@@ -48,6 +65,5 @@ export function ProductCard({
           </div>
         </div>
       </Card>
-    </Link>
   );
 }
