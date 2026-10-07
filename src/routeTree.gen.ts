@@ -35,6 +35,7 @@ import { Route as AuthenticatedDashboardSettingsRouteImport } from './routes/_au
 import { Route as AuthenticatedDashboardWishlistRouteImport } from './routes/_authenticated/dashboard.wishlist'
 import { Route as AuthenticatedOrdersOrderIdRouteImport } from './routes/_authenticated/orders.$orderId'
 import { Route as AuthenticatedSellerIndexRouteImport } from './routes/_authenticated/seller.index'
+import { Route as AuthenticatedSellerOrdersRouteImport } from './routes/_authenticated/seller.orders'
 import { Route as AuthenticatedSellerPayoutsRouteImport } from './routes/_authenticated/seller.payouts'
 import { Route as AuthenticatedSellerProductsRouteImport } from './routes/_authenticated/seller.products'
 import { Route as AuthenticatedSellerSettingsRouteImport } from './routes/_authenticated/seller.settings'
@@ -177,6 +178,12 @@ const AuthenticatedSellerIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedSellerRoute,
   } as any)
+const AuthenticatedSellerOrdersRoute =
+  AuthenticatedSellerOrdersRouteImport.update({
+    id: '/orders',
+    path: '/orders',
+    getParentRoute: () => AuthenticatedSellerRoute,
+  } as any)
 const AuthenticatedSellerPayoutsRoute =
   AuthenticatedSellerPayoutsRouteImport.update({
     id: '/payouts',
@@ -218,6 +225,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
   '/dashboard/wishlist': typeof AuthenticatedDashboardWishlistRoute
   '/orders/$orderId': typeof AuthenticatedOrdersOrderIdRoute
+  '/seller/orders': typeof AuthenticatedSellerOrdersRoute
   '/seller/payouts': typeof AuthenticatedSellerPayoutsRoute
   '/seller/products': typeof AuthenticatedSellerProductsRoute
   '/seller/settings': typeof AuthenticatedSellerSettingsRoute
@@ -244,6 +252,7 @@ export interface FileRoutesByTo {
   '/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
   '/dashboard/wishlist': typeof AuthenticatedDashboardWishlistRoute
   '/orders/$orderId': typeof AuthenticatedOrdersOrderIdRoute
+  '/seller/orders': typeof AuthenticatedSellerOrdersRoute
   '/seller/payouts': typeof AuthenticatedSellerPayoutsRoute
   '/seller/products': typeof AuthenticatedSellerProductsRoute
   '/seller/settings': typeof AuthenticatedSellerSettingsRoute
@@ -276,6 +285,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
   '/_authenticated/dashboard/wishlist': typeof AuthenticatedDashboardWishlistRoute
   '/_authenticated/orders/$orderId': typeof AuthenticatedOrdersOrderIdRoute
+  '/_authenticated/seller/orders': typeof AuthenticatedSellerOrdersRoute
   '/_authenticated/seller/payouts': typeof AuthenticatedSellerPayoutsRoute
   '/_authenticated/seller/products': typeof AuthenticatedSellerProductsRoute
   '/_authenticated/seller/settings': typeof AuthenticatedSellerSettingsRoute
@@ -308,6 +318,7 @@ export interface FileRouteTypes {
     | '/dashboard/settings'
     | '/dashboard/wishlist'
     | '/orders/$orderId'
+    | '/seller/orders'
     | '/seller/payouts'
     | '/seller/products'
     | '/seller/settings'
@@ -334,6 +345,7 @@ export interface FileRouteTypes {
     | '/dashboard/settings'
     | '/dashboard/wishlist'
     | '/orders/$orderId'
+    | '/seller/orders'
     | '/seller/payouts'
     | '/seller/products'
     | '/seller/settings'
@@ -365,6 +377,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/settings'
     | '/_authenticated/dashboard/wishlist'
     | '/_authenticated/orders/$orderId'
+    | '/_authenticated/seller/orders'
     | '/_authenticated/seller/payouts'
     | '/_authenticated/seller/products'
     | '/_authenticated/seller/settings'
@@ -569,6 +582,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSellerIndexRouteImport
       parentRoute: typeof AuthenticatedSellerRoute
     }
+    '/_authenticated/seller/orders': {
+      id: '/_authenticated/seller/orders'
+      path: '/orders'
+      fullPath: '/seller/orders'
+      preLoaderRoute: typeof AuthenticatedSellerOrdersRouteImport
+      parentRoute: typeof AuthenticatedSellerRoute
+    }
     '/_authenticated/seller/payouts': {
       id: '/_authenticated/seller/payouts'
       path: '/payouts'
@@ -644,6 +664,7 @@ const AuthenticatedDashboardRouteWithChildren =
   )
 
 interface AuthenticatedSellerRouteChildren {
+  AuthenticatedSellerOrdersRoute: typeof AuthenticatedSellerOrdersRoute
   AuthenticatedSellerPayoutsRoute: typeof AuthenticatedSellerPayoutsRoute
   AuthenticatedSellerProductsRoute: typeof AuthenticatedSellerProductsRoute
   AuthenticatedSellerSettingsRoute: typeof AuthenticatedSellerSettingsRoute
@@ -651,6 +672,7 @@ interface AuthenticatedSellerRouteChildren {
 }
 
 const AuthenticatedSellerRouteChildren: AuthenticatedSellerRouteChildren = {
+  AuthenticatedSellerOrdersRoute: AuthenticatedSellerOrdersRoute,
   AuthenticatedSellerPayoutsRoute: AuthenticatedSellerPayoutsRoute,
   AuthenticatedSellerProductsRoute: AuthenticatedSellerProductsRoute,
   AuthenticatedSellerSettingsRoute: AuthenticatedSellerSettingsRoute,

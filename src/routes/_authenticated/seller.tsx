@@ -7,6 +7,7 @@ import type { NavItem } from "@/types";
 const sellerNav: NavItem[] = [
   { label: "Overview", to: "/seller", icon: LayoutDashboard, exact: true },
   { label: "Products", to: "/seller/products", icon: Boxes },
+  { label: "Orders", to: "/seller/orders", icon: ClipboardList },
   { label: "Payouts", to: "/seller/payouts", icon: Receipt },
   { label: "Settings", to: "/seller/settings", icon: Settings },
 ];
