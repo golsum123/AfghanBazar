@@ -64,6 +64,13 @@
       "when": 1791292493130,
       "tag": "0008_approved_sellers_manage_products",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1791340011361,
+      "tag": "0009_seller_read_own_orders",
+      "breakpoints": true
     }
   ]
 }
