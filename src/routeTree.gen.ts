@@ -23,6 +23,7 @@ import { Route as AuthenticatedCrmRouteImport } from './routes/_authenticated/cr
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedSellerRouteImport } from './routes/_authenticated/seller'
 import { Route as ProductsProductIdRouteImport } from './routes/products.$productId'
+import { Route as StoresStoreIdRouteImport } from './routes/stores.$storeId'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminModerationRouteImport } from './routes/_authenticated/admin.moderation'
 import { Route as AuthenticatedAdminOrdersRouteImport } from './routes/_authenticated/admin.orders'
@@ -107,6 +108,11 @@ const AuthenticatedSellerRoute = AuthenticatedSellerRouteImport.update({
 const ProductsProductIdRoute = ProductsProductIdRouteImport.update({
   id: '/products/$productId',
   path: '/products/$productId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StoresStoreIdRoute = StoresStoreIdRouteImport.update({
+  id: '/stores/$storeId',
+  path: '/stores/$storeId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
@@ -217,6 +223,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/seller': typeof AuthenticatedSellerRouteWithChildren
   '/products/$productId': typeof ProductsProductIdRoute
+  '/stores/$storeId': typeof StoresStoreIdRoute
   '/admin/moderation': typeof AuthenticatedAdminModerationRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -244,6 +251,7 @@ export interface FileRoutesByTo {
   '/cart': typeof AuthenticatedCartRoute
   '/checkout': typeof AuthenticatedCheckoutRoute
   '/products/$productId': typeof ProductsProductIdRoute
+  '/stores/$storeId': typeof StoresStoreIdRoute
   '/admin/moderation': typeof AuthenticatedAdminModerationRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -277,6 +285,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/_authenticated/seller': typeof AuthenticatedSellerRouteWithChildren
   '/products/$productId': typeof ProductsProductIdRoute
+  '/stores/$storeId': typeof StoresStoreIdRoute
   '/_authenticated/admin/moderation': typeof AuthenticatedAdminModerationRoute
   '/_authenticated/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -310,6 +319,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/seller'
     | '/products/$productId'
+    | '/stores/$storeId'
     | '/admin/moderation'
     | '/admin/orders'
     | '/admin/settings'
@@ -337,6 +347,7 @@ export interface FileRouteTypes {
     | '/cart'
     | '/checkout'
     | '/products/$productId'
+    | '/stores/$storeId'
     | '/admin/moderation'
     | '/admin/orders'
     | '/admin/settings'
@@ -369,6 +380,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/seller'
     | '/products/$productId'
+    | '/stores/$storeId'
     | '/_authenticated/admin/moderation'
     | '/_authenticated/admin/orders'
     | '/_authenticated/admin/settings'
@@ -396,6 +408,7 @@ export interface RootRouteChildren {
   MarketplaceRoute: typeof MarketplaceRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   ProductsProductIdRoute: typeof ProductsProductIdRoute
+  StoresStoreIdRoute: typeof StoresStoreIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -496,6 +509,13 @@ declare module '@tanstack/react-router' {
       path: '/products/$productId'
       fullPath: '/products/$productId'
       preLoaderRoute: typeof ProductsProductIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stores/$storeId': {
+      id: '/stores/$storeId'
+      path: '/stores/$storeId'
+      fullPath: '/stores/$storeId'
+      preLoaderRoute: typeof StoresStoreIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/': {
@@ -714,6 +734,7 @@ const rootRouteChildren: RootRouteChildren = {
   MarketplaceRoute: MarketplaceRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   ProductsProductIdRoute: ProductsProductIdRoute,
+  StoresStoreIdRoute: StoresStoreIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
