@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { Boxes, LayoutDashboard, Receipt, Settings } from "lucide-react";
+import { Boxes, ClipboardList, LayoutDashboard, Receipt, Settings } from "lucide-react";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { RequireRole } from "@/components/auth/require-role";
 import type { NavItem } from "@/types";
