@@ -221,6 +221,13 @@ function ProductPage() {
                     {store?.description ? (
                       <p className="mt-2 text-sm text-muted-foreground">{store.description}</p>
                     ) : null}
+                    {store ? (
+                      <Button asChild variant="outline" size="sm" className="mt-3">
+                        <Link to="/stores/$storeId" params={{ storeId: store.id }}>
+                          Visit store
+                        </Link>
+                      </Button>
+                    ) : null}
                   </div>
                 </CardContent>
               </Card>
