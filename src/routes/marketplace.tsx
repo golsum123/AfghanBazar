@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { PackageSearch, Search } from "lucide-react";
+import { PackageSearch, Search, X } from "lucide-react";
 import { PublicLayout } from "@/layouts/public-layout";
 import { EmptyState, ErrorState, SkeletonRows } from "@/components/common/states";
 import { ProductCard } from "@/components/catalog/product-card";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -45,9 +46,16 @@ export const Route = createFileRoute("/marketplace")({
 
 type Sort = "newest" | "price_asc" | "price_desc";
 
+/** Plain `string` keeps the select literal out of the type-level parser. */
+const PRODUCT_SELECT: string = "*, product_images(storage_path, position)";
+
+interface ProductRow extends Product {
+  product_images: { storage_path: string; position: number }[] | null;
+}
+
 function MarketplacePage() {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<ProductRow[]>([]);
   const [images, setImages] = useState<Record<string, string>>({});
   const [stores, setStores] = useState<Record<string, SellerProfile>>({});
   const [loading, setLoading] = useState(true);
@@ -58,6 +66,14 @@ function MarketplacePage() {
   const [country, setCountry] = useState("all");
   const [sort, setSort] = useState<Sort>("newest");
 
+  const hasActiveFilters = search.trim() !== "" || category !== "all" || country !== "all";
+
+  const clearFilters = () => {
+    setSearch("");
+    setCategory("all");
+    setCountry("all");
+  };
+
   useEffect(() => {
     void fetchCategories().then(setCategories).catch(() => undefined);
   }, []);
@@ -67,7 +83,12 @@ function MarketplacePage() {
     const handle = setTimeout(async () => {
       setLoading(true);
       setError(null);
-      let q = supabase.from("products").select("*, product_images(storage_path, position)");
+      // Only active listings with stock left are shown to customers.
+      let q = supabase
+        .from("products")
+        .select(PRODUCT_SELECT)
+        .eq("status", "active")
+        .gt("stock_quantity", 0);
       if (category !== "all") q = q.eq("category_id", category);
       if (country !== "all") q = q.eq("country_of_origin", country as Product["country_of_origin"]);
       if (search.trim()) q = q.ilike("name", `%${search.trim()}%`);
@@ -75,7 +96,7 @@ function MarketplacePage() {
         sort === "newest"
           ? q.order("created_at", { ascending: false })
           : q.order("price", { ascending: sort === "price_asc" });
-      const { data, error: err } = await q.limit(60);
+      const { data, error: err } = await q.returns<ProductRow[]>().limit(60);
       if (!active) return;
       if (err) {
         setError(err.message);
@@ -168,7 +189,23 @@ function MarketplacePage() {
           </Select>
         </div>
 
-        <div className="mt-8">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-muted-foreground" aria-live="polite">
+            {loading
+              ? "Loading products…"
+              : error
+                ? "Products could not be loaded."
+                : `${products.length} ${products.length === 1 ? "product" : "products"} available`}
+          </p>
+          {hasActiveFilters && products.length > 0 ? (
+            <Button variant="outline" size="sm" onClick={clearFilters} className="gap-1.5">
+              <X className="size-3.5" />
+              Clear filters
+            </Button>
+          ) : null}
+        </div>
+
+        <div className="mt-6">
           {error ? (
             <ErrorState description={error} />
           ) : loading ? (
@@ -176,8 +213,20 @@ function MarketplacePage() {
           ) : products.length === 0 ? (
             <EmptyState
               icon={<PackageSearch className="size-5" />}
-              title="No products found"
-              description="Try a different search or filter. New listings appear once sellers are approved."
+              title={hasActiveFilters ? "No products match your search" : "No products available yet"}
+              description={
+                hasActiveFilters
+                  ? "Nothing matches the current search or filters. Try different keywords, or clear the filters to see everything that is currently in stock."
+                  : "New listings appear once an approved seller puts a product on sale."
+              }
+              action={
+                hasActiveFilters ? (
+                  <Button variant="outline" size="sm" onClick={clearFilters} className="gap-1.5">
+                    <X className="size-3.5" />
+                    Clear filters
+                  </Button>
+                ) : undefined
+              }
             />
           ) : (
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
