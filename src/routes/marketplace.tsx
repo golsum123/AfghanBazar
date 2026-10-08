@@ -197,7 +197,7 @@ function MarketplacePage() {
                 ? "Products could not be loaded."
                 : `${products.length} ${products.length === 1 ? "product" : "products"} available`}
           </p>
-          {hasActiveFilters ? (
+          {hasActiveFilters && products.length > 0 ? (
             <Button variant="outline" size="sm" onClick={clearFilters} className="gap-1.5">
               <X className="size-3.5" />
               Clear filters
