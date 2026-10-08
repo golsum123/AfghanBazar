@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
+import { fetchProductsWithCovers, formatPrice } from "@/lib/catalog";
 
 export type Order = Database["public"]["Tables"]["orders"]["Row"];
 export type OrderItem = Database["public"]["Tables"]["order_items"]["Row"];
@@ -23,6 +24,44 @@ export function statusVariant(s: OrderStatus): "default" | "secondary" | "destru
 
 export function orderNumber(id: string) {
   return `AB-${id.slice(0, 8).toUpperCase()}`;
+}
+
+/** The steps a normal order moves through, in order. */
+export const TIMELINE_STEPS: OrderStatus[] = ["confirmed", "processing", "shipped", "delivered"];
+
+/** Position of the current status in the timeline; -1 for pending and cancelled orders. */
+export function timelineIndex(status: OrderStatus) {
+  return TIMELINE_STEPS.indexOf(status);
+}
+
+/** AFN/INR totals of an order as one label, e.g. "؋ 1,200.00 AFN + ₹ 500.00 INR". */
+export function orderTotals(order: Pick<Order, "total_afn" | "total_inr">) {
+  const parts: string[] = [];
+  if (Number(order.total_afn) > 0) parts.push(formatPrice(Number(order.total_afn), "AFN"));
+  if (Number(order.total_inr) > 0) parts.push(formatPrice(Number(order.total_inr), "INR"));
+  return parts.join(" + ") || "—";
+}
+
+export interface OrderDetails {
+  order: Order | null;
+  items: OrderItem[];
+  /** Signed cover image per product id; absent when the product is no longer publicly listed. */
+  covers: Record<string, string>;
+}
+
+/**
+ * Loads one order with its items and item images. RLS on orders/order_items keeps
+ * customers to their own orders, so nothing is filtered here beyond the id.
+ */
+export async function fetchOrderForCustomer(orderId: string): Promise<OrderDetails> {
+  const [{ data: order }, { data: rows }] = await Promise.all([
+    supabase.from("orders").select("*").eq("id", orderId).maybeSingle(),
+    supabase.from("order_items").select("*").eq("order_id", orderId).order("created_at"),
+  ]);
+  const items = (rows ?? []) as OrderItem[];
+  const productIds = items.map((i) => i.product_id).filter((id): id is string => Boolean(id));
+  const { covers } = await fetchProductsWithCovers(productIds);
+  return { order: (order as Order | null) ?? null, items, covers };
 }
 
 export async function placeOrder(input: {

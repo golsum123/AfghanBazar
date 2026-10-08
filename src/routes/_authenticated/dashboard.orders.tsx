@@ -8,8 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { formatPrice } from "@/lib/catalog";
-import { ORDER_STATUS_LABEL, orderNumber, statusVariant, type Order } from "@/lib/orders";
+import { ORDER_STATUS_LABEL, orderNumber, orderTotals, statusVariant, type Order } from "@/lib/orders";
 
 export const Route = createFileRoute("/_authenticated/dashboard/orders")({
   head: () => ({
@@ -57,12 +56,13 @@ function OrdersPage() {
                       <TableHead>Status</TableHead>
                       <TableHead>Delivery</TableHead>
                       <TableHead className="text-right">Total</TableHead>
+                      <TableHead className="text-right">Action</TableHead>
                     </TableRow>
                   </TableHeader>
                 <TableBody>
                   {orders.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="p-0">
+                      <TableCell colSpan={6} className="p-0">
                         <EmptyState
                           className="rounded-none border-0"
                           title="No orders yet"
@@ -92,10 +92,13 @@ function OrdersPage() {
                             <span className="text-sm text-muted-foreground">—</span>
                           )}
                         </TableCell>
+                        <TableCell className="text-right whitespace-nowrap">{orderTotals(o)}</TableCell>
                         <TableCell className="text-right">
-                          {[Number(o.total_afn) > 0 ? formatPrice(Number(o.total_afn), "AFN") : null, Number(o.total_inr) > 0 ? formatPrice(Number(o.total_inr), "INR") : null]
-                            .filter(Boolean)
-                            .join(" + ")}
+                          <Button asChild size="sm" variant="outline">
+                            <Link to="/orders/$orderId" params={{ orderId: o.id }}>
+                              Track order
+                            </Link>
+                          </Button>
                         </TableCell>
                       </TableRow>
                     ))
