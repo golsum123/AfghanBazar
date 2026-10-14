@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHeader } from "@/components/common/page-header";
-import { EmptyState, LoadingState } from "@/components/common/states";
+import { EmptyState, ErrorState, LoadingState } from "@/components/common/states";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -26,6 +26,7 @@ function OrdersPage() {
   const { user } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -34,7 +35,8 @@ function OrdersPage() {
       .select("*")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
-      .then(({ data }) => {
+      .then(({ data, error }) => {
+        if (error) setFailed(true);
         setOrders(data ?? []);
         setLoading(false);
       });
@@ -47,6 +49,8 @@ function OrdersPage() {
         <CardContent className="p-0">
           {loading ? (
             <LoadingState label="Loading orders…" />
+          ) : failed ? (
+            <ErrorState title="Couldn't load your orders" onRetry={() => window.location.reload()} />
           ) : (
                 <Table>
                   <TableHeader>

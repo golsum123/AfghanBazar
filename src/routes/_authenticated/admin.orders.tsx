@@ -16,9 +16,8 @@ import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 import { formatPrice } from "@/lib/catalog";
-import { ORDER_STATUS_LABEL, orderNumber, statusVariant, type Order, type OrderItem, type OrderStatus } from "@/lib/orders";
+import { ORDER_STATUS_LABEL, allowedNextStatuses, orderNumber, statusVariant, type Order, type OrderItem, type OrderStatus } from "@/lib/orders";
 
-const STATUSES = Object.keys(ORDER_STATUS_LABEL) as OrderStatus[];
 
 export const Route = createFileRoute("/_authenticated/admin/orders")({
   head: () => ({
@@ -75,7 +74,8 @@ function AdminOrdersPage() {
   }
 
   async function changeStatus(status: OrderStatus) {
-    if (!open) return;
+    if (!open || status === open.status) return;
+    if (status === "cancelled" && !window.confirm("Cancel this order? Reserved stock is returned to the products and this cannot be undone.")) return;
     setSaving(true);
     const { data, error } = await supabase.from("orders").update({ status }).eq("id", open.id).select().maybeSingle();
     setSaving(false);
@@ -156,10 +156,12 @@ function AdminOrdersPage() {
               <div className="space-y-4 text-sm">
                 <div className="flex items-center justify-between gap-3">
                   <span className="text-muted-foreground">Status</span>
-                  <Select value={open.status} disabled={saving} onValueChange={(v) => void changeStatus(v as OrderStatus)}>
+                  <Select value={open.status} disabled={saving || allowedNextStatuses(open.status).length === 0} onValueChange={(v) => void changeStatus(v as OrderStatus)}>
                     <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      {STATUSES.map((s) => <SelectItem key={s} value={s}>{ORDER_STATUS_LABEL[s]}</SelectItem>)}
+                      {[open.status, ...allowedNextStatuses(open.status)].map((s) => (
+                        <SelectItem key={s} value={s}>{ORDER_STATUS_LABEL[s]}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>

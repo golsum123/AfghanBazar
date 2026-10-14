@@ -5,6 +5,7 @@ import { fetchProductsWithCovers, formatPrice } from "@/lib/catalog";
 export type Order = Database["public"]["Tables"]["orders"]["Row"];
 export type OrderItem = Database["public"]["Tables"]["order_items"]["Row"];
 export type OrderStatus = Database["public"]["Enums"]["order_status"];
+export { allowedNextStatuses } from "@/lib/order-status";
 
 export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
   pending: "Pending",
@@ -54,10 +55,12 @@ export interface OrderDetails {
  * customers to their own orders, so nothing is filtered here beyond the id.
  */
 export async function fetchOrderForCustomer(orderId: string): Promise<OrderDetails> {
-  const [{ data: order }, { data: rows }] = await Promise.all([
+  const [{ data: order, error }, { data: rows, error: itemsError }] = await Promise.all([
     supabase.from("orders").select("*").eq("id", orderId).maybeSingle(),
     supabase.from("order_items").select("*").eq("order_id", orderId).order("created_at"),
   ]);
+  if (error) throw new Error(error.message);
+  if (itemsError) throw new Error(itemsError.message);
   const items = (rows ?? []) as OrderItem[];
   const productIds = items.map((i) => i.product_id).filter((id): id is string => Boolean(id));
   const { covers } = await fetchProductsWithCovers(productIds);

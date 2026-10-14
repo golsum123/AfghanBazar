@@ -15,6 +15,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useCart } from "@/hooks/use-cart";
 import { fetchProductsWithCovers, formatPrice, isAvailable, type Currency, type Product } from "@/lib/catalog";
 import { placeOrder } from "@/lib/orders";
+import { validateDelivery, type DeliveryErrors } from "@/lib/validation";
 
 export const Route = createFileRoute("/_authenticated/checkout")({
   head: () => ({
@@ -37,6 +38,7 @@ function CheckoutPage() {
   const [lines, setLines] = useState<Line[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [errors, setErrors] = useState<DeliveryErrors>({});
   const [form, setForm] = useState({ full_name: "", phone: "", country: "", city: "", address: "", notes: "" });
 
   useEffect(() => {
@@ -69,9 +71,16 @@ function CheckoutPage() {
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
+    if (submitting) return;
+    const found = validateDelivery(form);
+    setErrors(found);
+    if (Object.keys(found).length > 0) {
+      toast.error("Please correct the highlighted fields");
+      return;
+    }
     setSubmitting(true);
     try {
-      const id = await placeOrder(form);
+      const id = await placeOrder({ ...form, full_name: form.full_name.trim(), phone: form.phone.trim(), country: form.country.trim(), city: form.city.trim(), address: form.address.trim(), notes: form.notes.trim() });
       await refresh();
       toast.success("Order placed");
       void navigate({ to: "/orders/$orderId", params: { orderId: id }, search: { placed: true } });
@@ -100,12 +109,12 @@ function CheckoutPage() {
               <Card className="shadow-none">
                 <CardHeader><CardTitle className="text-base">Delivery details</CardTitle></CardHeader>
                 <CardContent className="grid gap-4 sm:grid-cols-2">
-                  <Field label="Full name" id="full_name"><Input id="full_name" required value={form.full_name} onChange={set("full_name")} /></Field>
-                  <Field label="Phone" id="phone"><Input id="phone" required value={form.phone} onChange={set("phone")} /></Field>
-                  <Field label="Country" id="country"><Input id="country" required value={form.country} onChange={set("country")} /></Field>
-                  <Field label="City" id="city"><Input id="city" required value={form.city} onChange={set("city")} /></Field>
-                  <div className="sm:col-span-2"><Field label="Address" id="address"><Textarea id="address" required rows={2} value={form.address} onChange={set("address")} /></Field></div>
-                  <div className="sm:col-span-2"><Field label="Notes (optional)" id="notes"><Textarea id="notes" rows={3} value={form.notes} onChange={set("notes")} /></Field></div>
+                  <Field label="Full name" id="full_name" error={errors.full_name}><Input id="full_name" required aria-invalid={!!errors.full_name} aria-describedby={errors.full_name ? "full_name-error" : undefined} value={form.full_name} onChange={set("full_name")} /></Field>
+                  <Field label="Phone" id="phone" error={errors.phone}><Input id="phone" required aria-invalid={!!errors.phone} aria-describedby={errors.phone ? "phone-error" : undefined} value={form.phone} onChange={set("phone")} /></Field>
+                  <Field label="Country" id="country" error={errors.country}><Input id="country" required aria-invalid={!!errors.country} aria-describedby={errors.country ? "country-error" : undefined} value={form.country} onChange={set("country")} /></Field>
+                  <Field label="City" id="city" error={errors.city}><Input id="city" required aria-invalid={!!errors.city} aria-describedby={errors.city ? "city-error" : undefined} value={form.city} onChange={set("city")} /></Field>
+                  <div className="sm:col-span-2"><Field label="Address" id="address" error={errors.address}><Textarea id="address" required aria-invalid={!!errors.address} aria-describedby={errors.address ? "address-error" : undefined} rows={2} value={form.address} onChange={set("address")} /></Field></div>
+                  <div className="sm:col-span-2"><Field label="Notes (optional)" id="notes" error={errors.notes}><Textarea id="notes" rows={3} value={form.notes} onChange={set("notes")} /></Field></div>
                 </CardContent>
               </Card>
               <Card className="h-fit shadow-none">
@@ -135,6 +144,12 @@ function CheckoutPage() {
   );
 }
 
-function Field({ label, id, children }: { label: string; id: string; children: React.ReactNode }) {
-  return <div className="space-y-2"><Label htmlFor={id}>{label}</Label>{children}</div>;
+function Field({ label, id, error, children }: { label: string; id: string; error?: string | undefined; children: React.ReactNode }) {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={id}>{label}</Label>
+      {children}
+      {error ? <p id={`${id}-error`} role="alert" className="text-sm text-destructive">{error}</p> : null}
+    </div>
+  );
 }

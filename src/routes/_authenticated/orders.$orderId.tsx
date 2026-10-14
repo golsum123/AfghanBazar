@@ -20,6 +20,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/hooks/use-auth";
+import { ErrorState } from "@/components/common/states";
 import { formatPrice } from "@/lib/catalog";
 import {
   ORDER_STATUS_LABEL,
@@ -61,21 +63,32 @@ function OrderPage() {
   const { placed } = Route.useSearch();
   const [details, setDetails] = useState<OrderDetails | null>(null);
   const [loading, setLoading] = useState(true);
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  const { user } = useAuth();
 
   useEffect(() => {
     let active = true;
     setLoading(true);
-    void fetchOrderForCustomer(orderId).then((result) => {
-      if (!active) return;
-      setDetails(result);
-      setLoading(false);
-    });
+    setFailed(false);
+    fetchOrderForCustomer(orderId)
+      .then((result) => {
+        if (!active) return;
+        setDetails(result);
+        setLoading(false);
+      })
+      .catch(() => {
+        if (!active) return;
+        setFailed(true);
+        setLoading(false);
+      });
     return () => {
       active = false;
     };
-  }, [orderId]);
+  }, [orderId, attempt]);
 
-  const order = details?.order ?? null;
+  // Admins and sellers can read orders through RLS; this page is the customer's own view.
+  const order = details?.order && details.order.user_id === user?.id ? details.order : null;
   const items = details?.items ?? [];
   const covers = details?.covers ?? {};
   const hasDelivery = Boolean(
@@ -87,6 +100,8 @@ function OrderPage() {
       <section className="container-page max-w-4xl py-10">
         {loading ? (
           <LoadingState label="Loading order…" />
+        ) : failed ? (
+          <ErrorState onRetry={() => setAttempt((n) => n + 1)} />
         ) : !order ? (
           <EmptyState
             title="Order not found"
