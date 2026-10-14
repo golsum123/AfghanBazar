@@ -1,10 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { ShieldCheck, Store, Users, Activity } from "lucide-react";
+import { useEffect, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Boxes, ShieldCheck, ShoppingBag, Store, Users } from "lucide-react";
 import { PageHeader } from "@/components/common/page-header";
 import { StatCard } from "@/components/common/stat-card";
-import { ErrorState, LoadingState, EmptyState } from "@/components/common/states";
+import { ErrorState, LoadingState } from "@/components/common/states";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { loadBusinessSummary, type BusinessSummary } from "@/lib/summary";
+import { formatPrice } from "@/lib/catalog";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   head: () => ({
@@ -19,46 +22,79 @@ export const Route = createFileRoute("/_authenticated/admin/")({
 });
 
 function AdminOverview() {
+  const [summary, setSummary] = useState<BusinessSummary | null>(null);
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+
+  useEffect(() => {
+    let active = true;
+    setFailed(false);
+    loadBusinessSummary()
+      .then((s) => active && setSummary(s))
+      .catch(() => active && setFailed(true));
+    return () => {
+      active = false;
+    };
+  }, [attempt]);
+
   return (
     <>
       <PageHeader
         title="Platform overview"
-        description="Operations view for AfghanBazaar administrators."
+        description="Live counts from the AfghanBazaar database."
+        actions={
+          summary && summary.pendingSellers > 0 ? (
+            <Button asChild>
+              <Link to="/admin/moderation">Review {summary.pendingSellers} pending store(s)</Link>
+            </Button>
+          ) : null
+        }
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Customers" value="0" hint="Registered accounts" icon={Users} />
-        <StatCard label="Sellers" value="0" hint="Active shops" icon={Store} />
-        <StatCard label="Open reports" value="0" hint="Moderation queue" icon={ShieldCheck} />
-        <StatCard label="Uptime" value="100%" hint="Last 30 days" icon={Activity} />
-      </div>
+      {failed ? (
+        <ErrorState onRetry={() => setAttempt((n) => n + 1)} />
+      ) : !summary ? (
+        <LoadingState label="Loading platform figures…" />
+      ) : (
+        <>
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <StatCard label="Accounts" value={String(summary.accounts)} hint="Registered profiles" icon={Users} />
+            <StatCard
+              label="Sellers"
+              value={String(summary.approvedSellers)}
+              hint={`${summary.pendingSellers} awaiting approval`}
+              icon={Store}
+            />
+            <StatCard label="Products" value={String(summary.products)} hint="All listings" icon={Boxes} />
+            <StatCard
+              label="Orders"
+              value={String(summary.orders)}
+              hint={`${summary.openOrders} still open`}
+              icon={ShoppingBag}
+            />
+          </div>
 
-      <Card className="shadow-none">
-        <CardHeader>
-          <CardTitle className="text-base">Shared state components</CardTitle>
-          <CardDescription>
-            Reference for the loading, error and empty states used across all workspaces.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="loading">
-            <TabsList>
-              <TabsTrigger value="loading">Loading</TabsTrigger>
-              <TabsTrigger value="error">Error</TabsTrigger>
-              <TabsTrigger value="empty">Empty</TabsTrigger>
-            </TabsList>
-            <TabsContent value="loading" className="pt-4">
-              <LoadingState label="Loading platform metrics…" />
-            </TabsContent>
-            <TabsContent value="error" className="pt-4">
-              <ErrorState onRetry={() => undefined} />
-            </TabsContent>
-            <TabsContent value="empty" className="pt-4">
-              <EmptyState />
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+          <Card className="shadow-none">
+            <CardHeader>
+              <CardTitle className="text-base">Order value</CardTitle>
+              <CardDescription>
+                Sum of placed orders that are not cancelled. Payment is collected on delivery, so this is not
+                confirmed revenue.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-wrap gap-6 text-sm">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="size-4 text-muted-foreground" aria-hidden />
+                <span>{formatPrice(summary.valueAfn, "AFN")}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="size-4 text-muted-foreground" aria-hidden />
+                <span>{formatPrice(summary.valueInr, "INR")}</span>
+              </div>
+            </CardContent>
+          </Card>
+        </>
+      )}
     </>
   );
 }
