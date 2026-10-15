@@ -8,6 +8,21 @@
 
 BEGIN;
 
+-- 0. Preflight: stop early, with a readable message, if the live database differs
+--    from the repo migrations. Read-only; changes nothing.
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_enum e JOIN pg_type t ON t.oid = e.enumtypid
+                 WHERE t.typname = 'app_role' AND e.enumlabel = 'seller') THEN
+    RAISE EXCEPTION 'app_role has no value "seller" in this database';
+  END IF;
+  IF EXISTS (SELECT 1 FROM pg_constraint
+             WHERE conrelid = 'public.profiles'::regclass AND contype = 'f'
+               AND confrelid = 'auth.users'::regclass) THEN
+    RAISE EXCEPTION 'public.profiles.id references auth.users here, so a login-less demo seller cannot be inserted. Do not run this seed; ask for a revised version.';
+  END IF;
+END $$;
+
 -- 1. Demo seller. profiles.id is a plain uuid with no login attached, so this
 --    seller cannot sign in; it only owns the sample listings.
 INSERT INTO public.profiles (id, full_name, email, country, city, role)
