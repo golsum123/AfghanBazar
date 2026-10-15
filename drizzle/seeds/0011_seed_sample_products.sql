@@ -2,10 +2,9 @@
 -- Additive only: inserts rows, never updates or deletes anything. Safe to re-run
 -- (fixed UUIDs + ON CONFLICT DO NOTHING), so it cannot create duplicates.
 --
--- IMPORTANT: category slugs below are ASSUMPTIONS (the repo does not contain the
--- categories rows). Run the read-only check in the instructions first and edit the
--- slugs in the "wanted" list if yours differ. If any slug is missing the script
--- stops with a clear error and inserts nothing.
+-- Category slugs match the real public.categories table: carpets-rugs, dried-fruits-nuts,
+-- home-decoration, jewelry-handicrafts, other, saffron-spices, traditional-clothing.
+-- If any slug is missing the script stops with a clear error and inserts nothing.
 
 BEGIN;
 
@@ -31,22 +30,22 @@ BEGIN
   ) ON COMMIT DROP;
 
   INSERT INTO wanted VALUES
-   ('00000000-0000-4000-8000-0000000a0001'::uuid, 'food', 'Herat Saffron Threads (5 g)',
+   ('00000000-0000-4000-8000-0000000a0001'::uuid, 'saffron-spices', 'Herat Saffron Threads (5 g)',
     'Deep-red whole saffron threads from Herat, hand-picked and sun-dried. Sealed in an airtight tin to keep aroma and colour.',
     650.00, 'AFN', 'Afghanistan', 120, 0.005),
-   ('00000000-0000-4000-8000-0000000a0002'::uuid, 'handicrafts', 'Hand-Knotted Afghan Wool Rug (90 x 60 cm)',
+   ('00000000-0000-4000-8000-0000000a0002'::uuid, 'carpets-rugs', 'Hand-Knotted Afghan Wool Rug (90 x 60 cm)',
     'Small hand-knotted wool rug in a traditional red and navy geometric pattern. Suitable for entrances or as a wall hanging.',
     18500.00, 'AFN', 'Afghanistan', 8, 3.200),
-   ('00000000-0000-4000-8000-0000000a0003'::uuid, 'jewelry', 'Lapis Lazuli Pendant with Silver Setting',
+   ('00000000-0000-4000-8000-0000000a0003'::uuid, 'jewelry-handicrafts', 'Lapis Lazuli Pendant with Silver Setting',
     'Polished Badakhshan lapis lazuli stone set in a hand-finished silver-tone frame, on an adjustable chain.',
     2400.00, 'AFN', 'Afghanistan', 25, 0.020),
-   ('00000000-0000-4000-8000-0000000a0004'::uuid, 'food', 'Darjeeling First Flush Black Tea (250 g)',
+   ('00000000-0000-4000-8000-0000000a0004'::uuid, 'other', 'Darjeeling First Flush Black Tea (250 g)',
     'Light, floral loose-leaf black tea from the Darjeeling hills. Packed in a resealable pouch.',
     749.00, 'INR', 'India', 80, 0.250),
-   ('00000000-0000-4000-8000-0000000a0005'::uuid, 'clothing', 'Kashmiri Embroidered Wool-Blend Shawl',
+   ('00000000-0000-4000-8000-0000000a0005'::uuid, 'traditional-clothing', 'Kashmiri Embroidered Wool-Blend Shawl',
     'Soft wool-blend shawl with traditional Kashmiri needle embroidery along the border. Size about 200 x 70 cm.',
     2499.00, 'INR', 'India', 30, 0.450),
-   ('00000000-0000-4000-8000-0000000a0006'::uuid, 'home-decor', 'Jaipur Block-Print Cotton Bedsheet Set',
+   ('00000000-0000-4000-8000-0000000a0006'::uuid, 'home-decoration', 'Jaipur Block-Print Cotton Bedsheet Set',
     'Double bedsheet with two pillow covers, hand block-printed in Jaipur on breathable cotton. Machine washable.',
     1299.00, 'INR', 'India', 40, 0.900);
 
