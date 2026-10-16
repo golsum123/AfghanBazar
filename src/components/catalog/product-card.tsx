@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { ImageOff, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
+import { SafeImage } from "@/components/catalog/safe-image";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { formatPrice, isAvailable, type Product } from "@/lib/catalog";
@@ -27,13 +28,7 @@ export function ProductCard({
           className="absolute inset-0 z-0"
         />
         <div className="aspect-[4/3] bg-muted">
-          {imageUrl ? (
-            <img src={imageUrl} alt={product.name} loading="lazy" className="size-full object-cover" />
-          ) : (
-            <div className="flex size-full items-center justify-center text-muted-foreground">
-              <ImageOff className="size-6" />
-            </div>
-          )}
+          <SafeImage src={imageUrl} alt={product.name} loading="lazy" />
         </div>
         <div className="space-y-2 p-4">
           <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
