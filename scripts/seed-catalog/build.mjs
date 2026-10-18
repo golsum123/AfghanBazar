@@ -78,6 +78,7 @@ export function buildManifest() {
     name: p.name,
     category: p.category,
     file: imageFile(p),
+    subject: p.subject,
     storagePath: storagePath(p),
     prompt: imagePrompt(p),
   }));
@@ -87,7 +88,7 @@ export function buildManifest() {
     `file name shown (square JPEG, at least 1024 px; 1280 px is what the generator produces) in this folder, then follow README.md.\n\n` +
     `Negative prompt (if your tool supports one): ${catalog.negativePrompt}\n\n` +
     items.map((i, k) => `## ${k + 1}. ${i.name}\n- File: \`${i.file}\`\n- Product ID: \`${i.productId}\`\n- Prompt: ${i.prompt}\n`).join("\n");
-  return { json: JSON.stringify({ negativePrompt: catalog.negativePrompt, items }, null, 2) + "\n", md };
+  return { json: JSON.stringify({ negativePrompt: catalog.negativePrompt, compactStyle: catalog.compactStyle, items }, null, 2) + "\n", md };
 }
 
 const targets = () => {

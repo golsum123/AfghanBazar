@@ -34,5 +34,6 @@
     {"n": 30, "slug": "kashmiri-kahwa-tea-100g", "category": "other", "name": "Kashmiri Kahwa Tea Blend (100 g)", "description": "Green tea blended with cardamom, cinnamon and saffron notes, in the style of Kashmiri kahwa. Packed in a resealable pouch.", "price": 399.00, "currency": "INR", "origin": "India", "stock": 85, "weight": 0.100, "subject": "a small glass teapot and a small glass cup of pale golden-green tea with a cinnamon stick, a few green tea leaves and cardamom pods on the surface in front"}
   ],
   "stylePrompt": "Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands.",
+  "compactStyle": "professional e-commerce product photo, centered, plain light grey seamless background, soft natural window light, realistic textures, true colours, sharp focus",
   "negativePrompt": "cartoon, illustration, 3d render, distorted objects, extra items, text, lettering, logo, watermark, blurry, oversaturated, fake label"
 }

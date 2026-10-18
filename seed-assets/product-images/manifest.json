@@ -1,11 +1,13 @@
 {
   "negativePrompt": "cartoon, illustration, 3d render, distorted objects, extra items, text, lettering, logo, watermark, blurry, oversaturated, fake label",
+  "compactStyle": "professional e-commerce product photo, centered, plain light grey seamless background, soft natural window light, realistic textures, true colours, sharp focus",
   "items": [
     {
       "productId": "00000000-0000-4000-8000-0000000a0001",
       "name": "Herat Saffron Threads (5 g)",
       "category": "saffron-spices",
       "file": "01-herat-saffron-5g.jpg",
+      "subject": "a small round metal tin with the lid beside it, filled with deep-red whole saffron threads, a few loose threads on a light wooden surface",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0001/01-herat-saffron-5g.jpg",
       "prompt": "a small round metal tin with the lid beside it, filled with deep-red whole saffron threads, a few loose threads on a light wooden surface. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -14,6 +16,7 @@
       "name": "Hand-Knotted Afghan Wool Rug (90 x 60 cm)",
       "category": "carpets-rugs",
       "file": "02-afghan-wool-rug-90x60.jpg",
+      "subject": "a small hand-knotted wool rug with a traditional red and navy geometric medallion pattern, one corner gently folded to show the pile, photographed from above at a slight angle",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0002/02-afghan-wool-rug-90x60.jpg",
       "prompt": "a small hand-knotted wool rug with a traditional red and navy geometric medallion pattern, one corner gently folded to show the pile, photographed from above at a slight angle. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -22,6 +25,7 @@
       "name": "Lapis Lazuli Pendant with Silver Setting",
       "category": "jewelry-handicrafts",
       "file": "03-lapis-lazuli-pendant.jpg",
+      "subject": "a polished deep-blue lapis lazuli pendant with fine golden pyrite flecks in a silver-tone setting, on a thin chain curled on a pale stone surface",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0003/03-lapis-lazuli-pendant.jpg",
       "prompt": "a polished deep-blue lapis lazuli pendant with fine golden pyrite flecks in a silver-tone setting, on a thin chain curled on a pale stone surface. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -30,6 +34,7 @@
       "name": "Darjeeling First Flush Black Tea (250 g)",
       "category": "other",
       "file": "04-darjeeling-first-flush-tea.jpg",
+      "subject": "a plain unlabeled kraft paper pouch beside a small white cup of pale golden tea and a wooden scoop of loose whole tea leaves",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0004/04-darjeeling-first-flush-tea.jpg",
       "prompt": "a plain unlabeled kraft paper pouch beside a small white cup of pale golden tea and a wooden scoop of loose whole tea leaves. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -38,6 +43,7 @@
       "name": "Kashmiri Embroidered Wool-Blend Shawl",
       "category": "traditional-clothing",
       "file": "05-kashmiri-embroidered-shawl.jpg",
+      "subject": "a neatly folded muted-teal wool-blend shawl with detailed floral needle embroidery along the border and fringe visible",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0005/05-kashmiri-embroidered-shawl.jpg",
       "prompt": "a neatly folded muted-teal wool-blend shawl with detailed floral needle embroidery along the border and fringe visible. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -46,6 +52,7 @@
       "name": "Jaipur Block-Print Cotton Bedsheet Set",
       "category": "home-decoration",
       "file": "06-jaipur-block-print-bedsheet.jpg",
+      "subject": "a folded indigo-and-white hand block-printed cotton bedsheet with two matching pillow covers stacked on top, floral repeat pattern visible",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0006/06-jaipur-block-print-bedsheet.jpg",
       "prompt": "a folded indigo-and-white hand block-printed cotton bedsheet with two matching pillow covers stacked on top, floral repeat pattern visible. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -54,6 +61,7 @@
       "name": "Afghan Baluchi Prayer Rug (Wool, 130 x 80 cm)",
       "category": "carpets-rugs",
       "file": "07-afghan-baluchi-prayer-rug.jpg",
+      "subject": "a hand-woven wool prayer rug in deep burgundy, charcoal and ivory with an arch-shaped central design, laid flat and photographed from above",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0007/07-afghan-baluchi-prayer-rug.jpg",
       "prompt": "a hand-woven wool prayer rug in deep burgundy, charcoal and ivory with an arch-shaped central design, laid flat and photographed from above. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -62,6 +70,7 @@
       "name": "Afghan Kilim Flat-Weave Wool Rug (120 x 80 cm)",
       "category": "carpets-rugs",
       "file": "08-afghan-kilim-flatweave-rug.jpg",
+      "subject": "a flat-woven wool kilim rug with bold geometric bands in rust, indigo and cream, loosely rolled at one end to show the weave",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0008/08-afghan-kilim-flatweave-rug.jpg",
       "prompt": "a flat-woven wool kilim rug with bold geometric bands in rust, indigo and cream, loosely rolled at one end to show the weave. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -70,6 +79,7 @@
       "name": "Kashmiri Hand-Knotted Silk-Blend Rug (90 x 60 cm)",
       "category": "carpets-rugs",
       "file": "09-kashmiri-silk-blend-rug.jpg",
+      "subject": "a fine hand-knotted silk-blend rug with a floral medallion in rose, sage and gold tones, soft sheen on the pile, photographed from above at a slight angle",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0009/09-kashmiri-silk-blend-rug.jpg",
       "prompt": "a fine hand-knotted silk-blend rug with a floral medallion in rose, sage and gold tones, soft sheen on the pile, photographed from above at a slight angle. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -78,6 +88,7 @@
       "name": "Jaipur Hand-Woven Cotton Dhurrie (150 x 90 cm)",
       "category": "carpets-rugs",
       "file": "10-jaipur-cotton-dhurrie.jpg",
+      "subject": "a flat-weave cotton dhurrie with mustard and indigo stripes and tasselled ends, laid flat on a pale floor",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0010/10-jaipur-cotton-dhurrie.jpg",
       "prompt": "a flat-weave cotton dhurrie with mustard and indigo stripes and tasselled ends, laid flat on a pale floor. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -86,6 +97,7 @@
       "name": "Afghan Green Raisins - Kishmish (500 g)",
       "category": "dried-fruits-nuts",
       "file": "11-afghan-green-raisins-500g.jpg",
+      "subject": "a rustic wooden bowl heaped with green raisins, a small pile of raisins spilling onto the surface, no packaging text",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0011/11-afghan-green-raisins-500g.jpg",
       "prompt": "a rustic wooden bowl heaped with green raisins, a small pile of raisins spilling onto the surface, no packaging text. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -94,6 +106,7 @@
       "name": "Afghan Pistachios, In-Shell (500 g)",
       "category": "dried-fruits-nuts",
       "file": "12-afghan-pistachios-500g.jpg",
+      "subject": "a shallow woven basket of in-shell pistachios, a few cracked open showing green kernels, on a light wooden surface",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0012/12-afghan-pistachios-500g.jpg",
       "prompt": "a shallow woven basket of in-shell pistachios, a few cracked open showing green kernels, on a light wooden surface. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -102,6 +115,7 @@
       "name": "Indian Whole Cashews W240 (500 g)",
       "category": "dried-fruits-nuts",
       "file": "13-indian-whole-cashews-500g.jpg",
+      "subject": "a white ceramic bowl filled with whole pale cashew kernels, some scattered in front, on a light surface",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0013/13-indian-whole-cashews-500g.jpg",
       "prompt": "a white ceramic bowl filled with whole pale cashew kernels, some scattered in front, on a light surface. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -110,6 +124,7 @@
       "name": "Kashmiri Mamra-Style Almonds (250 g)",
       "category": "dried-fruits-nuts",
       "file": "14-kashmiri-mamra-almonds-250g.jpg",
+      "subject": "a small brass bowl of whole brown almonds, a handful scattered beside it on a light wooden surface",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0014/14-kashmiri-mamra-almonds-250g.jpg",
       "prompt": "a small brass bowl of whole brown almonds, a handful scattered beside it on a light wooden surface. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -118,6 +133,7 @@
       "name": "Afghan Black Cumin Seeds - Zira Siyah (100 g)",
       "category": "saffron-spices",
       "file": "15-afghan-black-cumin-100g.jpg",
+      "subject": "a small clear glass jar with a plain lid filled with thin dark cumin seeds, and a small wooden spoon of seeds beside it",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0015/15-afghan-black-cumin-100g.jpg",
       "prompt": "a small clear glass jar with a plain lid filled with thin dark cumin seeds, and a small wooden spoon of seeds beside it. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -126,6 +142,7 @@
       "name": "Kashmiri Mongra Saffron (1 g)",
       "category": "saffron-spices",
       "file": "16-kashmiri-mongra-saffron-1g.jpg",
+      "subject": "a tiny clear glass vial with a cork stopper holding bright red saffron threads, a few threads beside it on a pale ceramic dish",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0016/16-kashmiri-mongra-saffron-1g.jpg",
       "prompt": "a tiny clear glass vial with a cork stopper holding bright red saffron threads, a few threads beside it on a pale ceramic dish. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -134,6 +151,7 @@
       "name": "Kerala Green Cardamom Pods (100 g)",
       "category": "saffron-spices",
       "file": "17-kerala-green-cardamom-100g.jpg",
+      "subject": "a small wooden bowl heaped with whole green cardamom pods, a few pods scattered in front on a light surface",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0017/17-kerala-green-cardamom-100g.jpg",
       "prompt": "a small wooden bowl heaped with whole green cardamom pods, a few pods scattered in front on a light surface. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -142,6 +160,7 @@
       "name": "Afghan Kuchi Tribal Statement Necklace (Silver-Tone)",
       "category": "jewelry-handicrafts",
       "file": "18-kuchi-tribal-necklace.jpg",
+      "subject": "a handcrafted silver-tone tribal statement necklace with engraved discs, small coloured glass accents and dangling pendants, arranged in a curve on a neutral surface",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0018/18-kuchi-tribal-necklace.jpg",
       "prompt": "a handcrafted silver-tone tribal statement necklace with engraved discs, small coloured glass accents and dangling pendants, arranged in a curve on a neutral surface. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -150,6 +169,7 @@
       "name": "Lapis Lazuli Bead Bracelet",
       "category": "jewelry-handicrafts",
       "file": "19-lapis-lazuli-bead-bracelet.jpg",
+      "subject": "a bracelet of round polished deep-blue lapis lazuli beads with golden flecks, coiled on a pale stone surface",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0019/19-lapis-lazuli-bead-bracelet.jpg",
       "prompt": "a bracelet of round polished deep-blue lapis lazuli beads with golden flecks, coiled on a pale stone surface. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -158,6 +178,7 @@
       "name": "Jaipur Meenakari Enamel Jhumka Earrings",
       "category": "jewelry-handicrafts",
       "file": "20-meenakari-jhumka-earrings.jpg",
+      "subject": "a pair of dome-shaped gold-tone jhumka earrings with hand-painted green, pink and blue enamel and tiny hanging beads, on a neutral surface",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0020/20-meenakari-jhumka-earrings.jpg",
       "prompt": "a pair of dome-shaped gold-tone jhumka earrings with hand-painted green, pink and blue enamel and tiny hanging beads, on a neutral surface. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -166,6 +187,7 @@
       "name": "Channapatna Lacquered Wooden Toy Set (5 pieces)",
       "category": "jewelry-handicrafts",
       "file": "21-channapatna-wooden-toy-set.jpg",
+      "subject": "five hand-turned lacquered wooden toys in bright red, yellow, green, blue and orange, a spinning top, small figures and a ring stack, arranged neatly on a light surface",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0021/21-channapatna-wooden-toy-set.jpg",
       "prompt": "five hand-turned lacquered wooden toys in bright red, yellow, green, blue and orange, a spinning top, small figures and a ring stack, arranged neatly on a light surface. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -174,6 +196,7 @@
       "name": "Afghan Hand-Embroidered Cotton Dress (Kuchi-Style)",
       "category": "traditional-clothing",
       "file": "22-afghan-embroidered-dress.jpg",
+      "subject": "a red and black cotton dress with dense hand embroidery and small mirror-work on the bodice, laid out flat and photographed from above, no person",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0022/22-afghan-embroidered-dress.jpg",
       "prompt": "a red and black cotton dress with dense hand embroidery and small mirror-work on the bodice, laid out flat and photographed from above, no person. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -182,6 +205,7 @@
       "name": "Afghan Pakol Wool Cap",
       "category": "traditional-clothing",
       "file": "23-afghan-pakol-wool-cap.jpg",
+      "subject": "a traditional round rolled-brim wool pakol cap in oatmeal-brown, shown from a slight three-quarter angle on a neutral surface, no person",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0023/23-afghan-pakol-wool-cap.jpg",
       "prompt": "a traditional round rolled-brim wool pakol cap in oatmeal-brown, shown from a slight three-quarter angle on a neutral surface, no person. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -190,6 +214,7 @@
       "name": "Banarasi Silk-Blend Dupatta",
       "category": "traditional-clothing",
       "file": "24-banarasi-silk-blend-dupatta.jpg",
+      "subject": "a folded deep-maroon silk-blend dupatta with a woven gold-tone border and floral motifs, one end draped to show the pattern",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0024/24-banarasi-silk-blend-dupatta.jpg",
       "prompt": "a folded deep-maroon silk-blend dupatta with a woven gold-tone border and floral motifs, one end draped to show the pattern. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -198,6 +223,7 @@
       "name": "Istalif-Style Turquoise Glazed Ceramic Plate (28 cm)",
       "category": "home-decoration",
       "file": "25-istalif-turquoise-ceramic-plate.jpg",
+      "subject": "a hand-thrown ceramic plate with glossy turquoise glaze and dark floral detail, standing at a slight angle against a plain backdrop on a small wooden stand",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0025/25-istalif-turquoise-ceramic-plate.jpg",
       "prompt": "a hand-thrown ceramic plate with glossy turquoise glaze and dark floral detail, standing at a slight angle against a plain backdrop on a small wooden stand. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -206,6 +232,7 @@
       "name": "Afghan Felted Wool Cushion Cover (45 x 45 cm)",
       "category": "home-decoration",
       "file": "26-afghan-felt-cushion-cover.jpg",
+      "subject": "a square felted wool cushion with a bold geometric pattern in cream, rust and charcoal, standing upright on a neutral surface",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0026/26-afghan-felt-cushion-cover.jpg",
       "prompt": "a square felted wool cushion with a bold geometric pattern in cream, rust and charcoal, standing upright on a neutral surface. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -214,6 +241,7 @@
       "name": "Jaipur Blue Pottery Vase (25 cm)",
       "category": "home-decoration",
       "file": "27-jaipur-blue-pottery-vase.jpg",
+      "subject": "a hand-painted blue pottery vase with cobalt and turquoise floral motifs on a white glaze, standing on a plain surface",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0027/27-jaipur-blue-pottery-vase.jpg",
       "prompt": "a hand-painted blue pottery vase with cobalt and turquoise floral motifs on a white glaze, standing on a plain surface. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -222,6 +250,7 @@
       "name": "Afghan Wild Mountain Honey (500 g)",
       "category": "other",
       "file": "28-afghan-mountain-honey-500g.jpg",
+      "subject": "a plain unlabeled glass jar of thick golden honey with a wooden honey dipper resting beside it, a thin ribbon of honey on the dipper",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0028/28-afghan-mountain-honey-500g.jpg",
       "prompt": "a plain unlabeled glass jar of thick golden honey with a wooden honey dipper resting beside it, a thin ribbon of honey on the dipper. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -230,6 +259,7 @@
       "name": "Afghan Nabat Crystal Rock Sugar (250 g)",
       "category": "other",
       "file": "29-afghan-nabat-rock-sugar-250g.jpg",
+      "subject": "a small white ceramic dish of pale amber crystallised rock sugar chunks, a few larger crystals beside it on a light surface",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0029/29-afghan-nabat-rock-sugar-250g.jpg",
       "prompt": "a small white ceramic dish of pale amber crystallised rock sugar chunks, a few larger crystals beside it on a light surface. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     },
@@ -238,6 +268,7 @@
       "name": "Kashmiri Kahwa Tea Blend (100 g)",
       "category": "other",
       "file": "30-kashmiri-kahwa-tea-100g.jpg",
+      "subject": "a small glass teapot and a small glass cup of pale golden-green tea with a cinnamon stick, a few green tea leaves and cardamom pods on the surface in front",
       "storagePath": "00000000-0000-4000-8000-0000000d3e01/00000000-0000-4000-8000-0000000a0030/30-kashmiri-kahwa-tea-100g.jpg",
       "prompt": "a small glass teapot and a small glass cup of pale golden-green tea with a cinnamon stick, a few green tea leaves and cardamom pods on the surface in front. Professional e-commerce product photograph. Square 1:1 composition with the product centered and generous empty margin (subject fills about 60-65% of the frame), on a clean seamless warm light-grey backdrop. Soft natural window light from the left, gentle realistic shadow, true-to-life colours, realistic material textures, sharp focus. No text, no logos, no labels, no watermark, no people, no hands."
     }
