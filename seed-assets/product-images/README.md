@@ -2,8 +2,9 @@
 
 No images are committed here yet: they must be generated with a real image-generation tool.
 
+0. Automatic route: a GitHub Actions workflow (`.github/workflows/generate-product-images.yml`) generates the images from the prompts and commits them to the feature branch. Which products it makes is set in `scripts/seed-catalog/generate.config.json`.
 1. Open `PROMPTS.md` (generated from `scripts/seed-catalog/catalog.json`). Each product has its own prompt.
-2. Generate one **square 1600 x 1600 JPEG** per product and save it in this folder with the **exact file name** listed.
+2. Generate one **square JPEG (at least 1024 px; the generator produces 1280 px)** per product and save it in this folder with the **exact file name** listed.
    Keep the product centered with margin: product cards crop to 4:3 and the detail page shows a square.
 3. Check them offline: `node scripts/seed-catalog/validate.mjs --require-images`
    (checks all 30 exist, valid JPEG, square, >= 1024 px, < 5 MB, and no two files are identical).

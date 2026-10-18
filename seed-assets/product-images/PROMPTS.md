@@ -1,7 +1,7 @@
 # Sample product image manifest
 
 Generate one image per row with an image-generation tool you have access to, save each as the exact
-file name shown (JPEG, 1600x1600 px, square) in this folder, then follow README.md.
+file name shown (square JPEG, at least 1024 px; 1280 px is what the generator produces) in this folder, then follow README.md.
 
 Negative prompt (if your tool supports one): cartoon, illustration, 3d render, distorted objects, extra items, text, lettering, logo, watermark, blurry, oversaturated, fake label
 

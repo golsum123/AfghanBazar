@@ -1,0 +1,62 @@
+# Generates the sample product images on a GitHub runner (the agent sandbox cannot reach image providers).
+# - Runs ONLY on the feature branch below, when this file or generate.config.json changes (or manually).
+# - Needs NO secrets: the default provider is free and keyless. Nothing is uploaded to Supabase.
+# - Saves images under the exact names in seed-assets/product-images/manifest.json and commits them back
+#   to the same branch. Which products to generate is controlled by scripts/seed-catalog/generate.config.json
+#   ("only": [1] = test with one image; remove "only" to generate all 30).
+name: Generate sample product images
+
+on:
+  push:
+    branches: [claude/youthful-volta-v0qx98]
+    paths:
+      - ".github/workflows/generate-product-images.yml"
+      - "scripts/seed-catalog/generate.config.json"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: generate-product-images
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    if: github.ref == 'refs/heads/claude/youthful-volta-v0qx98'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Pillow
+        run: pip install pillow
+      - name: Offline script tests
+        run: python -m unittest scripts/seed-catalog/test_fetch_images.py
+      - name: Generate images
+        run: python scripts/seed-catalog/fetch_images.py --config scripts/seed-catalog/generate.config.json
+      - name: Validate (partial is fine; format, squareness, duplicates)
+        if: always()
+        run: node scripts/seed-catalog/validate.mjs
+      - name: Keep a copy as a workflow artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: product-images
+          path: |
+            seed-assets/product-images/*.jpg
+            seed-assets/product-images/generation-log.json
+          if-no-files-found: ignore
+      - name: Commit generated images to this branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add seed-assets/product-images/*.jpg seed-assets/product-images/generation-log.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No new images to commit."
+          else
+            git commit -m "chore: add generated sample product images"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
