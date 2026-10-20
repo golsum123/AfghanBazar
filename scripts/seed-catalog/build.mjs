@@ -40,23 +40,42 @@ export function buildSeedSql(current) {
 }
 
 const linkRows = () =>
-  catalog.products.map((p) => `  (${q(productId(p))}::uuid, ${q(storagePath(p))})`).join(",\n");
+  catalog.products.map((p) => `  (${q(productId(p))}::uuid, ${q(imageFile(p))}, ${q(storagePath(p))})`).join(",\n");
+
+// Finds each uploaded file: the exact expected path is preferred, otherwise any object in the bucket
+// with the same file name (e.g. uploaded at the bucket root), so nothing has to be moved or re-uploaded.
+const resolvedCte = () => `WITH expected(product_id, file_name, expected_path) AS (VALUES
+${linkRows()}
+),
+resolved AS (
+  -- Find the uploaded file for each product: prefer the exact expected path, otherwise any object in the
+  -- bucket whose file name matches (so files uploaded at the bucket root or in another folder still link).
+  SELECT e.product_id, e.file_name, e.expected_path, o.name AS actual_path,
+    (SELECT count(*) FROM storage.objects x
+      WHERE x.bucket_id = 'product-images' AND (x.name = e.file_name OR x.name LIKE '%/' || e.file_name)) AS n_matches
+  FROM expected e
+  LEFT JOIN LATERAL (
+    SELECT x.name FROM storage.objects x
+    WHERE x.bucket_id = 'product-images' AND (x.name = e.file_name OR x.name LIKE '%/' || e.file_name)
+    ORDER BY (x.name = e.expected_path) DESC, x.name
+    LIMIT 1
+  ) o ON true
+)`;
 
 // Per-file status: shows exactly which of the 30 files is linked and what is missing otherwise.
-const statusSelect = (rows) => `SELECT m.path AS storage_path,
+const statusSelect = () => `SELECT r.file_name, r.actual_path AS storage_path,
   CASE
     WHEN p.id IS NULL THEN 'MISSING: product row not found in public.products'
-    WHEN o.name IS NULL THEN 'MISSING: file not found in storage.objects (bucket product-images)'
+    WHEN r.actual_path IS NULL THEN 'MISSING: file not found in storage.objects (bucket product-images)'
     WHEN pi.id IS NULL THEN 'NOT LINKED'
     ELSE 'linked'
-  END AS status
-FROM (VALUES
-${rows}
-) AS m(product_id, path)
-LEFT JOIN public.products p ON p.id = m.product_id
-LEFT JOIN storage.objects o ON o.bucket_id = 'product-images' AND o.name = m.path
-LEFT JOIN public.product_images pi ON pi.product_id = m.product_id AND pi.storage_path = m.path
-ORDER BY m.path`;
+  END AS status,
+  CASE WHEN r.actual_path IS NULL THEN NULL WHEN r.actual_path = r.expected_path THEN 'expected path' ELSE 'different path' END AS path_check,
+  CASE WHEN r.n_matches > 1 THEN r.n_matches || ' files share this name; the first was used' END AS note
+FROM resolved r
+LEFT JOIN public.products p ON p.id = r.product_id
+LEFT JOIN public.product_images pi ON pi.product_id = r.product_id AND pi.storage_path = r.actual_path
+ORDER BY r.file_name;`;
 
 export function buildPreflightSql() {
   return `-- 0012 preflight (READ-ONLY): run this BEFORE 0012_link_sample_product_images.sql.
@@ -68,38 +87,44 @@ SELECT id, name, public FROM storage.buckets WHERE id = 'product-images';
 -- 2. Existing product_images rows (the old rug.jpg row stays untouched).
 SELECT id, product_id, storage_path, position FROM public.product_images ORDER BY created_at;
 
--- 3. Status of each of the 30 expected files (product exists? file uploaded? already linked?).
-${statusSelect(linkRows())};
+-- 3. Every file currently in the bucket, with its real path.
+SELECT name AS storage_path, created_at FROM storage.objects WHERE bucket_id = 'product-images' ORDER BY name;
+
+-- 4. Status of each of the 30 expected files (product exists? file uploaded, and at which path? already linked?).
+${resolvedCte()}
+${statusSelect()}
 `;
 }
 
 export function buildLinkSql() {
   return `-- 0012 (seed): link uploaded sample product images to their products.
--- Run AFTER 0011 and AFTER the 30 image files are uploaded to the private
--- 'product-images' bucket at exactly the paths below (see seed-assets/product-images/README.md).
--- Additive and idempotent: it only inserts product_images rows, only for products that exist
--- and files that really exist in storage.objects, and skips rows that are already linked.
--- Existing rows (e.g. an old rug.jpg) are never changed or deleted. A new image gets the next
--- free position for its product, so it never ties with an existing image.
+-- Run AFTER 0011 and AFTER the 30 image files are uploaded to the private 'product-images' bucket.
+-- Files are found by file name (01-herat-saffron-5g.jpg ... 30-kashmiri-kahwa-tea-100g.jpg). The exact
+-- expected path <seller id>/<product id>/<file> is preferred, but a file at any other path in the bucket
+-- (for example the bucket root) is linked using the path where it really is. Nothing is moved or uploaded.
+-- Additive and idempotent: it only inserts product_images rows, only for products that exist and files
+-- that really exist in storage.objects, and skips a product/path that is already linked.
+-- Existing rows (e.g. an old rug.jpg) are never changed or deleted. A new image gets the next free
+-- position for its product, so it never ties with an existing image.
 -- It stores the storage PATH (like the app does), never a signed URL.
 
 BEGIN;
 
 INSERT INTO public.product_images (product_id, storage_path, url, position)
-SELECT m.product_id, m.path, m.path,
-  COALESCE((SELECT max(x.position) + 1 FROM public.product_images x WHERE x.product_id = m.product_id), 0)
-FROM (VALUES
-${linkRows()}
-) AS m(product_id, path)
-JOIN public.products p ON p.id = m.product_id
-JOIN storage.objects o ON o.bucket_id = 'product-images' AND o.name = m.path
-WHERE NOT EXISTS (
-  SELECT 1 FROM public.product_images pi
-  WHERE pi.product_id = m.product_id AND pi.storage_path = m.path
-);
+${resolvedCte()}
+SELECT r.product_id, r.actual_path, r.actual_path,
+  COALESCE((SELECT max(x.position) + 1 FROM public.product_images x WHERE x.product_id = r.product_id), 0)
+FROM resolved r
+JOIN public.products p ON p.id = r.product_id
+WHERE r.actual_path IS NOT NULL
+  AND NOT EXISTS (
+    SELECT 1 FROM public.product_images pi
+    WHERE pi.product_id = r.product_id AND pi.storage_path = r.actual_path
+  );
 
 -- Result: one row per expected file. Every row should say 'linked'.
-${statusSelect(linkRows())};
+${resolvedCte()}
+${statusSelect()}
 
 COMMIT;
 `;
