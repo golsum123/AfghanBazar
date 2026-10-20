@@ -15,6 +15,7 @@ No images are committed here yet: they must be generated with a real image-gener
      then add `--apply`. It uploads to the private `product-images` bucket and links `product_images`.
    - **Dashboard + SQL:** upload each file in the Supabase dashboard (Storage > product-images) at the path
      `00000000-0000-4000-8000-0000000d3e01/<product-id>/<file name>` (paths are in `manifest.json`),
-     then run `drizzle/seeds/0012_link_sample_product_images.sql`.
+     then run `drizzle/seeds/0012_preflight_readonly.sql` (read-only checks, one statement at a time),
+     then `drizzle/seeds/0012_link_sample_product_images.sql`. Its last result lists all 30 files; each should say `linked`.
 
 The bucket stays private; the app creates short-lived signed links at view time. Never commit keys.
