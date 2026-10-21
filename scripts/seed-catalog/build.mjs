@@ -104,7 +104,8 @@ export function buildLinkSql() {
 -- (for example the bucket root) is linked using the path where it really is. Nothing is moved or uploaded.
 -- Additive and idempotent: it only inserts product_images rows, only for products that exist and files
 -- that really exist in storage.objects, and skips a product/path that is already linked.
--- Existing rows (e.g. an old rug.jpg) are never changed or deleted. A new image gets the next free
+-- Existing rows are never deleted. Only the url column of two kinds of rows is repaired (see Repair 1 and 2 below).
+-- A new image gets the next free
 -- position for its product, so it never ties with an existing image.
 -- It stores the storage PATH (like the app does), never a signed URL.
 
@@ -121,6 +122,26 @@ WHERE r.actual_path IS NOT NULL
     SELECT 1 FROM public.product_images pi
     WHERE pi.product_id = r.product_id AND pi.storage_path = r.actual_path
   );
+
+-- Repair 1: the app only reads storage_path, but url is kept equal to it (as the app writes it).
+-- Fixes a catalog row whose url was edited by hand. Only touches rows of the 30 sample products whose
+-- storage_path is inside the demo seller folder, and only where url differs. Leaves positions alone.
+UPDATE public.product_images
+SET url = storage_path
+WHERE url IS DISTINCT FROM storage_path
+  AND storage_path LIKE '${catalog.demoSellerId}/%'
+  AND product_id IN (
+${catalog.products.map((p) => `    ${q(productId(p))}::uuid`).join(",\n")}
+  );
+
+-- Repair 2: restore the original test-product row (Handwoven Afghan Rug) so its url equals its path again.
+-- Guarded by its exact id, product and path, so it can never touch any other row.
+UPDATE public.product_images
+SET url = storage_path
+WHERE id = '07d9afdf-ba12-4761-8ecf-73cf9c25c944'
+  AND product_id = '34dbdc46-dd7f-4ef7-8eb5-c44c18b8caf9'
+  AND storage_path = 'a28954af-c43f-4c8d-83ba-7fb8b216afe8/34dbdc46-dd7f-4ef7-8eb5-c44c18b8caf9/rug.jpg'
+  AND url IS DISTINCT FROM storage_path;
 
 -- Result: one row per expected file. Every row should say 'linked'.
 ${resolvedCte()}

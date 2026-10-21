@@ -5,7 +5,8 @@
 -- (for example the bucket root) is linked using the path where it really is. Nothing is moved or uploaded.
 -- Additive and idempotent: it only inserts product_images rows, only for products that exist and files
 -- that really exist in storage.objects, and skips a product/path that is already linked.
--- Existing rows (e.g. an old rug.jpg) are never changed or deleted. A new image gets the next free
+-- Existing rows are never deleted. Only the url column of two kinds of rows is repaired (see Repair 1 and 2 below).
+-- A new image gets the next free
 -- position for its product, so it never ties with an existing image.
 -- It stores the storage PATH (like the app does), never a signed URL.
 
@@ -67,6 +68,55 @@ WHERE r.actual_path IS NOT NULL
     SELECT 1 FROM public.product_images pi
     WHERE pi.product_id = r.product_id AND pi.storage_path = r.actual_path
   );
+
+-- Repair 1: the app only reads storage_path, but url is kept equal to it (as the app writes it).
+-- Fixes a catalog row whose url was edited by hand. Only touches rows of the 30 sample products whose
+-- storage_path is inside the demo seller folder, and only where url differs. Leaves positions alone.
+UPDATE public.product_images
+SET url = storage_path
+WHERE url IS DISTINCT FROM storage_path
+  AND storage_path LIKE '00000000-0000-4000-8000-0000000d3e01/%'
+  AND product_id IN (
+    '00000000-0000-4000-8000-0000000a0001'::uuid,
+    '00000000-0000-4000-8000-0000000a0002'::uuid,
+    '00000000-0000-4000-8000-0000000a0003'::uuid,
+    '00000000-0000-4000-8000-0000000a0004'::uuid,
+    '00000000-0000-4000-8000-0000000a0005'::uuid,
+    '00000000-0000-4000-8000-0000000a0006'::uuid,
+    '00000000-0000-4000-8000-0000000a0007'::uuid,
+    '00000000-0000-4000-8000-0000000a0008'::uuid,
+    '00000000-0000-4000-8000-0000000a0009'::uuid,
+    '00000000-0000-4000-8000-0000000a0010'::uuid,
+    '00000000-0000-4000-8000-0000000a0011'::uuid,
+    '00000000-0000-4000-8000-0000000a0012'::uuid,
+    '00000000-0000-4000-8000-0000000a0013'::uuid,
+    '00000000-0000-4000-8000-0000000a0014'::uuid,
+    '00000000-0000-4000-8000-0000000a0015'::uuid,
+    '00000000-0000-4000-8000-0000000a0016'::uuid,
+    '00000000-0000-4000-8000-0000000a0017'::uuid,
+    '00000000-0000-4000-8000-0000000a0018'::uuid,
+    '00000000-0000-4000-8000-0000000a0019'::uuid,
+    '00000000-0000-4000-8000-0000000a0020'::uuid,
+    '00000000-0000-4000-8000-0000000a0021'::uuid,
+    '00000000-0000-4000-8000-0000000a0022'::uuid,
+    '00000000-0000-4000-8000-0000000a0023'::uuid,
+    '00000000-0000-4000-8000-0000000a0024'::uuid,
+    '00000000-0000-4000-8000-0000000a0025'::uuid,
+    '00000000-0000-4000-8000-0000000a0026'::uuid,
+    '00000000-0000-4000-8000-0000000a0027'::uuid,
+    '00000000-0000-4000-8000-0000000a0028'::uuid,
+    '00000000-0000-4000-8000-0000000a0029'::uuid,
+    '00000000-0000-4000-8000-0000000a0030'::uuid
+  );
+
+-- Repair 2: restore the original test-product row (Handwoven Afghan Rug) so its url equals its path again.
+-- Guarded by its exact id, product and path, so it can never touch any other row.
+UPDATE public.product_images
+SET url = storage_path
+WHERE id = '07d9afdf-ba12-4761-8ecf-73cf9c25c944'
+  AND product_id = '34dbdc46-dd7f-4ef7-8eb5-c44c18b8caf9'
+  AND storage_path = 'a28954af-c43f-4c8d-83ba-7fb8b216afe8/34dbdc46-dd7f-4ef7-8eb5-c44c18b8caf9/rug.jpg'
+  AND url IS DISTINCT FROM storage_path;
 
 -- Result: one row per expected file. Every row should say 'linked'.
 WITH expected(product_id, file_name, expected_path) AS (VALUES
