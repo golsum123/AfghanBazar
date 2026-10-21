@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, Heart, ImageOff, MapPin, ShoppingCart, Store } from "lucide-react";
+import { SafeImage } from "@/components/catalog/safe-image";
+import { ArrowLeft, Heart, MapPin, ShoppingCart, Store } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { useCart } from "@/hooks/use-cart";
@@ -134,13 +135,7 @@ function ProductPage() {
           <div className="grid gap-10 lg:grid-cols-2">
             <div>
               <div className="aspect-square overflow-hidden rounded-xl border bg-muted">
-                {images[active] ? (
-                  <img src={images[active]} alt={product.name} className="size-full object-cover" />
-                ) : (
-                  <div className="flex size-full items-center justify-center text-muted-foreground">
-                    <ImageOff className="size-8" />
-                  </div>
-                )}
+                <SafeImage src={images[active]} alt={product.name} iconClassName="size-8" />
               </div>
               {images.length > 1 ? (
                 <div className="mt-3 grid grid-cols-5 gap-2">
@@ -155,7 +150,7 @@ function ProductPage() {
                       )}
                       aria-label={`Show image ${i + 1}`}
                     >
-                      <img src={src} alt="" className="size-full object-cover" />
+                      <SafeImage src={src} alt="" />
                     </button>
                   ))}
                 </div>
