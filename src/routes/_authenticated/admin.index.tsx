@@ -45,7 +45,7 @@ function AdminOverview() {
         actions={
           summary && summary.pendingSellers > 0 ? (
             <Button asChild>
-              <Link to="/admin/moderation">Review {summary.pendingSellers} pending store(s)</Link>
+              <Link to="/admin/sellers">Review {summary.pendingSellers} pending application(s)</Link>
             </Button>
           ) : null
         }
