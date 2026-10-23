@@ -56,3 +56,13 @@ test("sign-out invalidates an in-flight load, then a new sign-in loads cleanly",
   if (guard.isCurrent(second)) state.roles = ["admin"];
   assert.deepEqual(state.roles, ["admin"]);
 });
+
+test("a redirect into a workspace the user cannot open falls back to their default", () => {
+  assert.equal(postLoginDestination(["customer"], "/admin/users"), "/dashboard");
+  assert.equal(postLoginDestination(["customer"], "/seller"), "/dashboard");
+  assert.equal(postLoginDestination(["seller"], "/admin"), "/dashboard");
+  assert.equal(postLoginDestination(["seller"], "/seller/products"), "/seller/products");
+  assert.equal(postLoginDestination(["admin"], "/admin/users?x=1"), "/admin/users?x=1");
+  assert.equal(postLoginDestination(["admin"], "/adminfoo"), "/adminfoo");
+  assert.equal(postLoginDestination(["admin"], "/dashboard/orders"), "/dashboard/orders");
+});
