@@ -1,14 +1,15 @@
 import {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useMemo,
   useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { createAuthStore } from "@/lib/auth-store";
 import type { AppRole, Profile } from "@/types";
 
 interface AuthContextValue {
@@ -60,55 +61,44 @@ async function ensureProfile(user: User) {
   }
 }
 
+async function fetchUser(current: Session) {
+  await ensureProfile(current.user);
+
+  const [{ data: profileRow }, { data: roleRows }] = await Promise.all([
+    supabase.from("profiles").select("*").eq("id", current.user.id).maybeSingle(),
+    supabase.from("user_roles").select("role").eq("user_id", current.user.id),
+  ]);
+
+  return {
+    profile: (profileRow as Profile | null) ?? null,
+    roles: (roleRows ?? []).map((r) => r.role as AppRole),
+  };
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [roles, setRoles] = useState<AppRole[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const load = useCallback(async (current: Session | null) => {
-    if (!current?.user) {
-      setProfile(null);
-      setRoles([]);
-      setLoading(false);
-      return;
-    }
-
-    await ensureProfile(current.user);
-
-    const [{ data: profileRow }, { data: roleRows }] = await Promise.all([
-      supabase.from("profiles").select("*").eq("id", current.user.id).maybeSingle(),
-      supabase.from("user_roles").select("role").eq("user_id", current.user.id),
-    ]);
-
-    setProfile((profileRow as Profile | null) ?? null);
-    setRoles((roleRows ?? []).map((r) => r.role as AppRole));
-    setLoading(false);
-  }, []);
+  const [store] = useState(() => createAuthStore<Session, Profile>({ fetchUser }));
+  const { session, profile, roles, loading } = useSyncExternalStore(
+    store.subscribe,
+    store.getState,
+    store.getState,
+  );
 
   useEffect(() => {
     let active = true;
 
     const { data: subscription } = supabase.auth.onAuthStateChange((_event, next) => {
-      if (!active) return;
-      setSession(next);
-      // Defer backend reads out of the auth callback.
-      setTimeout(() => {
-        void load(next);
-      }, 0);
+      if (active) store.applySession(next);
     });
 
     void supabase.auth.getSession().then(({ data }) => {
-      if (!active) return;
-      setSession(data.session);
-      void load(data.session);
+      if (active) store.applySession(data.session);
     });
 
     return () => {
       active = false;
       subscription.subscription.unsubscribe();
     };
-  }, [load]);
+  }, [store]);
 
   const value = useMemo<AuthContextValue>(
     () => ({
@@ -120,15 +110,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       hasRole: (role: AppRole) => roles.includes(role),
       refreshProfile: async () => {
         const { data } = await supabase.auth.getSession();
-        await load(data.session);
+        await store.reload(data.session);
       },
       signOut: async () => {
+        store.clear();
         await supabase.auth.signOut();
-        setProfile(null);
-        setRoles([]);
       },
     }),
-    [session, profile, roles, loading, load],
+    [session, profile, roles, loading, store],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
