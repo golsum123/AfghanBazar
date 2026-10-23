@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { defaultWorkspace } from "@/lib/auth-flow";
 import { useAuth } from "@/hooks/use-auth";
 import type { NavItem } from "@/types";
 
@@ -29,13 +30,7 @@ export function SiteHeader() {
   const navigate = useNavigate();
   const signedIn = Boolean(session);
 
-  const workspacePath = roles.includes("admin")
-    ? "/admin"
-    : roles.includes("crm_staff")
-      ? "/crm"
-      : roles.includes("seller")
-        ? "/seller"
-        : "/dashboard";
+  const workspacePath = defaultWorkspace(roles);
 
   const isAdmin = roles.includes("admin");
   const navItems: NavItem[] = isAdmin

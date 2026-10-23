@@ -91,3 +91,44 @@ test("signed-out visitors get no destination", () => {
   assert.equal(h.store.getState().loading, false);
   assert.equal(h.dest(), null);
 });
+
+const seller: Sess = { user: { id: "sell-1" } };
+
+test("seller-only: delayed role loading never yields /dashboard, then lands on /seller", async () => {
+  const h = harness({ "sell-1": ["seller"] });
+  h.store.applySession(seller);
+  assert.equal(h.dest(), null, "waits for roles instead of guessing /dashboard");
+  assert.equal(h.dest("/seller/orders"), null);
+  await h.flush();
+  assert.equal(h.dest(), "/seller");
+  assert.equal(h.dest("/seller/orders"), "/seller/orders");
+  assert.equal(h.dest("/admin"), "/seller");
+});
+
+test("seller-only: repeated sign-ins and session restoration all land on /seller", async () => {
+  const h = harness({ "sell-1": ["seller"] });
+  for (let i = 0; i < 3; i++) {
+    h.store.applySession(seller);
+    assert.equal(h.dest(), null, `sign-in ${i + 1}`);
+    await h.flush();
+    assert.equal(h.dest(), "/seller", `sign-in ${i + 1}`);
+    h.store.applySession({ user: { id: "sell-1" } }); // token refresh keeps the roles
+    assert.equal(h.dest(), "/seller");
+    h.store.clear();
+    h.store.applySession(null);
+    await h.flush();
+  }
+});
+
+test("admin then seller on the same tab: each gets their own workspace", async () => {
+  const h = harness({ "admin-1": ["admin"], "sell-1": ["seller"] });
+  h.store.applySession(admin);
+  await h.flush();
+  assert.equal(h.dest(), "/admin");
+  h.store.clear();
+  h.store.applySession(null);
+  h.store.applySession(seller);
+  assert.equal(h.dest(), null);
+  await h.flush();
+  assert.equal(h.dest(), "/seller");
+});

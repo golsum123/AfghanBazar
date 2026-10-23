@@ -10,7 +10,20 @@ import {
 test("admins go to /admin by default, others to /dashboard", () => {
   assert.equal(postLoginDestination(["admin", "seller"]), "/admin");
   assert.equal(postLoginDestination(["customer"]), "/dashboard");
-  assert.equal(postLoginDestination(["seller"]), "/dashboard");
+  assert.equal(postLoginDestination(["seller"]), "/seller");
+});
+
+test("role priority: admin > crm_staff > seller > customer", () => {
+  assert.equal(postLoginDestination(["customer", "seller"]), "/seller");
+  assert.equal(postLoginDestination(["seller", "crm_staff"]), "/crm");
+  assert.equal(postLoginDestination(["seller", "admin", "customer"]), "/admin");
+  assert.equal(postLoginDestination(["customer"]), "/dashboard");
+});
+
+test("seller with a redirect they may open keeps it; one they may not falls back to /seller", () => {
+  assert.equal(postLoginDestination(["seller"], "/seller/products"), "/seller/products");
+  assert.equal(postLoginDestination(["seller"], "/orders/9"), "/orders/9");
+  assert.equal(postLoginDestination(["seller"], "/admin/users"), "/seller");
 });
 
 test("roles that are still loading never yield an admin destination", () => {
@@ -60,7 +73,7 @@ test("sign-out invalidates an in-flight load, then a new sign-in loads cleanly",
 test("a redirect into a workspace the user cannot open falls back to their default", () => {
   assert.equal(postLoginDestination(["customer"], "/admin/users"), "/dashboard");
   assert.equal(postLoginDestination(["customer"], "/seller"), "/dashboard");
-  assert.equal(postLoginDestination(["seller"], "/admin"), "/dashboard");
+  assert.equal(postLoginDestination(["seller"], "/admin"), "/seller");
   assert.equal(postLoginDestination(["seller"], "/seller/products"), "/seller/products");
   assert.equal(postLoginDestination(["admin"], "/admin/users?x=1"), "/admin/users?x=1");
   assert.equal(postLoginDestination(["admin"], "/adminfoo"), "/adminfoo");
