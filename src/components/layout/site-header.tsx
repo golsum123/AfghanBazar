@@ -37,6 +37,11 @@ export function SiteHeader() {
         ? "/seller"
         : "/dashboard";
 
+  const isAdmin = roles.includes("admin");
+  const navItems: NavItem[] = isAdmin
+    ? [...publicNav, { label: "Admin console", to: "/admin" }]
+    : publicNav;
+
   async function handleSignOut() {
     await signOut();
     await navigate({ to: "/", replace: true });
@@ -48,7 +53,7 @@ export function SiteHeader() {
         <Brand />
 
         <nav className="hidden items-center gap-1 md:flex">
-          {publicNav.map((item) => (
+          {navItems.map((item) => (
             <Link
               key={item.to}
               to={item.to}
@@ -91,7 +96,7 @@ export function SiteHeader() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link to={workspacePath}>My workspace</Link>
+                  <Link to={workspacePath}>{isAdmin ? "Admin console" : "My workspace"}</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to="/dashboard/settings">Profile settings</Link>
@@ -128,7 +133,7 @@ export function SiteHeader() {
           <SheetContent side="right" className="w-72">
             <SheetTitle className="sr-only">Navigation</SheetTitle>
             <div className="flex flex-col gap-1 p-4 pt-10">
-              {publicNav.map((item) => (
+              {navItems.map((item) => (
                 <Link
                   key={item.to}
                   to={item.to}
