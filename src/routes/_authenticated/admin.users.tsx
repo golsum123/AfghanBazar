@@ -13,7 +13,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
-import type { Profile } from "@/types";
+import {
+  groupRoles,
+  profileRoleDrifted,
+  type ApprovalStatus,
+  type SellerSummary,
+} from "@/lib/user-directory";
+import type { AppRole, Profile } from "@/types";
 
 export const Route = createFileRoute("/_authenticated/admin/users")({
   head: () => ({
@@ -29,8 +35,8 @@ export const Route = createFileRoute("/_authenticated/admin/users")({
 
 function AdminUsersPage() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
-  const [roles, setRoles] = useState<Record<string, string[]>>({});
-  const [stores, setStores] = useState<Record<string, string>>({});
+  const [roles, setRoles] = useState<Record<string, AppRole[]>>({});
+  const [sellers, setSellers] = useState<Record<string, SellerSummary>>({});
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
 
@@ -38,14 +44,19 @@ function AdminUsersPage() {
     void Promise.all([
       supabase.from("profiles").select("*").order("created_at", { ascending: false }),
       supabase.from("user_roles").select("user_id, role"),
-      supabase.from("seller_profiles").select("user_id, approval_status"),
+      supabase.from("seller_profiles").select("user_id, store_name, approval_status"),
     ]).then(([p, r, s]) => {
       if (p.error || r.error || s.error) setFailed(true);
-      setStores(Object.fromEntries((s.data ?? []).map((x) => [x.user_id, x.approval_status])));
+      setSellers(
+        Object.fromEntries(
+          (s.data ?? []).map((x) => [
+            x.user_id,
+            { storeName: x.store_name, approvalStatus: x.approval_status as ApprovalStatus },
+          ]),
+        ),
+      );
       setProfiles((p.data ?? []) as Profile[]);
-      const map: Record<string, string[]> = {};
-      for (const row of r.data ?? []) (map[row.user_id] ??= []).push(row.role);
-      setRoles(map);
+      setRoles(groupRoles((r.data ?? []) as { user_id: string; role: AppRole }[]));
       setLoading(false);
     });
   }, []);
@@ -54,7 +65,7 @@ function AdminUsersPage() {
     <>
       <PageHeader
         title="Users"
-        description="All registered accounts. Roles come from the user_roles table. Seller access also needs an approved store (see Seller Applications). Admin and CRM roles are assigned in the database."
+        description="All registered accounts. Roles come from the user_roles table only. Store and seller application status come from seller_profiles and are separate from roles; seller access needs an approved application (see Seller Applications). Admin and CRM roles are assigned in the database."
         actions={<Badge variant="secondary">{profiles.length} accounts</Badge>}
       />
 
@@ -70,15 +81,16 @@ function AdminUsersPage() {
                 <TableRow>
                   <TableHead>Name</TableHead>
                   <TableHead>Email</TableHead>
-                  <TableHead>Role</TableHead>
+                  <TableHead>Roles</TableHead>
                   <TableHead>Store</TableHead>
+                  <TableHead>Seller application</TableHead>
                   <TableHead className="text-right">Joined</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {profiles.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="p-0">
+                    <TableCell colSpan={6} className="p-0">
                       <EmptyState
                         className="rounded-none border-0"
                         title="No accounts yet"
@@ -92,12 +104,35 @@ function AdminUsersPage() {
                       <TableCell className="font-medium">{p.full_name || "—"}</TableCell>
                       <TableCell>{p.email || "—"}</TableCell>
                       <TableCell className="space-x-1">
-                        {(roles[p.id] ?? [p.role]).map((r) => (
-                          <Badge key={r} variant="outline">{r}</Badge>
-                        ))}
+                        {(roles[p.id] ?? []).length === 0 ? (
+                          <span className="text-muted-foreground">none</span>
+                        ) : (
+                          (roles[p.id] ?? []).map((r) => (
+                            <Badge key={r} variant={r === "admin" ? "default" : "outline"}>
+                              {r}
+                            </Badge>
+                          ))
+                        )}
+                        {profileRoleDrifted(p.role, roles[p.id] ?? []) && (
+                          <Badge
+                            variant="secondary"
+                            title="profiles.role is display only and differs from user_roles"
+                          >
+                            profile: {p.role}
+                          </Badge>
+                        )}
                       </TableCell>
-                      <TableCell>{stores[p.id] ? <Badge variant="outline">{stores[p.id]}</Badge> : "—"}</TableCell>
-                      <TableCell className="text-right">{new Date(p.created_at).toLocaleDateString()}</TableCell>
+                      <TableCell>{sellers[p.id]?.storeName ?? "—"}</TableCell>
+                      <TableCell>
+                        {sellers[p.id] ? (
+                          <Badge variant="outline">{sellers[p.id]?.approvalStatus}</Badge>
+                        ) : (
+                          "—"
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {new Date(p.created_at).toLocaleDateString()}
+                      </TableCell>
                     </TableRow>
                   ))
                 )}

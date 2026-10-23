@@ -47,12 +47,13 @@ async function ensureProfile(user: User) {
     });
   }
 
-  const { data: roleRows } = await supabase
+  const { data: roleRows, error: roleError } = await supabase
     .from("user_roles")
     .select("role")
     .eq("user_id", user.id);
 
-  if (!roleRows || roleRows.length === 0) {
+  // Only seed a default role after a successful read that found none; a failed read must not touch roles.
+  if (!roleError && roleRows && roleRows.length === 0) {
     const requested = (user.user_metadata?.["requested_role"] as string | undefined) ?? "customer";
     const role: AppRole = requested === "seller" ? "seller" : "customer";
     await supabase.from("user_roles").insert({ user_id: user.id, role });
