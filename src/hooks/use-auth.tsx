@@ -4,11 +4,13 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { createLoadGuard, needsReload } from "@/lib/auth-flow";
 import type { AppRole, Profile } from "@/types";
 
 interface AuthContextValue {
@@ -66,49 +68,81 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [roles, setRoles] = useState<AppRole[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const guard = useRef(createLoadGuard());
+  const loadedUserId = useRef<string | null>(null);
+
+  /** Loads profile and roles for `current`; results are dropped if a newer load or sign-out superseded it. */
   const load = useCallback(async (current: Session | null) => {
+    const token = guard.current.next();
+
     if (!current?.user) {
+      loadedUserId.current = null;
       setProfile(null);
       setRoles([]);
       setLoading(false);
       return;
     }
 
-    await ensureProfile(current.user);
+    try {
+      await ensureProfile(current.user);
 
-    const [{ data: profileRow }, { data: roleRows }] = await Promise.all([
-      supabase.from("profiles").select("*").eq("id", current.user.id).maybeSingle(),
-      supabase.from("user_roles").select("role").eq("user_id", current.user.id),
-    ]);
+      const [{ data: profileRow }, { data: roleRows }] = await Promise.all([
+        supabase.from("profiles").select("*").eq("id", current.user.id).maybeSingle(),
+        supabase.from("user_roles").select("role").eq("user_id", current.user.id),
+      ]);
 
-    setProfile((profileRow as Profile | null) ?? null);
-    setRoles((roleRows ?? []).map((r) => r.role as AppRole));
-    setLoading(false);
+      if (!guard.current.isCurrent(token)) return;
+      loadedUserId.current = current.user.id;
+      setProfile((profileRow as Profile | null) ?? null);
+      setRoles((roleRows ?? []).map((r) => r.role as AppRole));
+    } catch {
+      if (!guard.current.isCurrent(token)) return;
+      setProfile(null);
+      setRoles([]);
+    }
+    if (guard.current.isCurrent(token)) setLoading(false);
   }, []);
 
-  useEffect(() => {
-    let active = true;
-
-    const { data: subscription } = supabase.auth.onAuthStateChange((_event, next) => {
-      if (!active) return;
+  /** Applies a session change; a different user resets roles and holds `loading` until they are fetched. */
+  const applySession = useCallback(
+    (next: Session | null) => {
       setSession(next);
+      const nextId = next?.user?.id ?? null;
+      if (!needsReload(loadedUserId.current, nextId)) return;
+      // Drop any in-flight load for the previous user and block routing until the new roles arrive.
+      guard.current.invalidate();
+      loadedUserId.current = null;
+      setProfile(null);
+      setRoles([]);
+      if (nextId) setLoading(true);
       // Defer backend reads out of the auth callback.
       setTimeout(() => {
         void load(next);
       }, 0);
+    },
+    [load],
+  );
+
+  useEffect(() => {
+    let active = true;
+    const loadGuard = guard.current;
+
+    const { data: subscription } = supabase.auth.onAuthStateChange((_event, next) => {
+      if (!active) return;
+      applySession(next);
     });
 
     void supabase.auth.getSession().then(({ data }) => {
       if (!active) return;
-      setSession(data.session);
-      void load(data.session);
+      applySession(data.session);
     });
 
     return () => {
       active = false;
+      loadGuard.invalidate();
       subscription.subscription.unsubscribe();
     };
-  }, [load]);
+  }, [applySession]);
 
   const value = useMemo<AuthContextValue>(
     () => ({
@@ -123,9 +157,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await load(data.session);
       },
       signOut: async () => {
-        await supabase.auth.signOut();
+        guard.current.invalidate();
+        loadedUserId.current = null;
         setProfile(null);
         setRoles([]);
+        await supabase.auth.signOut();
       },
     }),
     [session, profile, roles, loading, load],

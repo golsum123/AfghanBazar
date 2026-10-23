@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { postLoginDestination } from "@/lib/auth-flow";
 import { PublicLayout } from "@/layouts/public-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,15 +41,10 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
-function safePath(value: string | undefined) {
-  if (!value) return "/dashboard";
-  return value.startsWith("/") && !value.startsWith("//") ? value : "/dashboard";
-}
-
 function AuthPage() {
   const { redirect } = Route.useSearch();
   const navigate = useNavigate();
-  const { session, loading: authLoading } = useAuth();
+  const { session, roles, loading: authLoading } = useAuth();
 
   const [mode, setMode] = useState("signin");
   const [busy, setBusy] = useState(false);
@@ -63,10 +59,11 @@ function AuthPage() {
   const [pendingConfirm, setPendingConfirm] = useState(false);
 
   useEffect(() => {
+    // Wait until roles are loaded so admins and customers get the right destination.
     if (!authLoading && session) {
-      void navigate({ to: safePath(redirect), replace: true });
+      void navigate({ to: postLoginDestination(roles, redirect), replace: true });
     }
-  }, [authLoading, session, navigate, redirect]);
+  }, [authLoading, session, roles, navigate, redirect]);
 
   async function handleSignIn(event: React.FormEvent) {
     event.preventDefault();
