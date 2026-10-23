@@ -22,14 +22,25 @@ function canOpen(path: string, roles: readonly AppRole[]): boolean {
 }
 
 /**
+ * Default landing workspace by role priority: admin, then CRM staff, then seller,
+ * then customer. Used by sign-in and the header so both always agree.
+ */
+export function defaultWorkspace(roles: readonly AppRole[]): string {
+  if (roles.includes("admin")) return "/admin";
+  if (roles.includes("crm_staff")) return "/crm";
+  if (roles.includes("seller")) return "/seller";
+  return "/dashboard";
+}
+
+/**
  * Where to send a user once sign-in and role loading have both finished.
- * A safe `redirect` the user is allowed to open wins; otherwise admins land on
- * /admin and everyone else on /dashboard. Route guards still enforce access.
+ * A safe `redirect` the user is allowed to open wins; otherwise the user lands on
+ * their default workspace (see defaultWorkspace). Route guards still enforce access.
  */
 export function postLoginDestination(roles: readonly AppRole[], redirect?: string): string {
   const requested = sanitizeRedirect(redirect);
   if (requested && canOpen(requested, roles)) return requested;
-  return roles.includes("admin") ? "/admin" : "/dashboard";
+  return defaultWorkspace(roles);
 }
 
 /** A session change needs a fresh profile/role load only when the user differs from the loaded one. */
