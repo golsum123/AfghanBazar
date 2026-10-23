@@ -1,16 +1,15 @@
 import {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
-import { createLoadGuard, needsReload } from "@/lib/auth-flow";
+import { createAuthStore } from "@/lib/auth-store";
 import type { AppRole, Profile } from "@/types";
 
 interface AuthContextValue {
@@ -62,87 +61,44 @@ async function ensureProfile(user: User) {
   }
 }
 
+async function fetchUser(current: Session) {
+  await ensureProfile(current.user);
+
+  const [{ data: profileRow }, { data: roleRows }] = await Promise.all([
+    supabase.from("profiles").select("*").eq("id", current.user.id).maybeSingle(),
+    supabase.from("user_roles").select("role").eq("user_id", current.user.id),
+  ]);
+
+  return {
+    profile: (profileRow as Profile | null) ?? null,
+    roles: (roleRows ?? []).map((r) => r.role as AppRole),
+  };
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [roles, setRoles] = useState<AppRole[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const guard = useRef(createLoadGuard());
-  const loadedUserId = useRef<string | null>(null);
-
-  /** Loads profile and roles for `current`; results are dropped if a newer load or sign-out superseded it. */
-  const load = useCallback(async (current: Session | null) => {
-    const token = guard.current.next();
-
-    if (!current?.user) {
-      loadedUserId.current = null;
-      setProfile(null);
-      setRoles([]);
-      setLoading(false);
-      return;
-    }
-
-    try {
-      await ensureProfile(current.user);
-
-      const [{ data: profileRow }, { data: roleRows }] = await Promise.all([
-        supabase.from("profiles").select("*").eq("id", current.user.id).maybeSingle(),
-        supabase.from("user_roles").select("role").eq("user_id", current.user.id),
-      ]);
-
-      if (!guard.current.isCurrent(token)) return;
-      loadedUserId.current = current.user.id;
-      setProfile((profileRow as Profile | null) ?? null);
-      setRoles((roleRows ?? []).map((r) => r.role as AppRole));
-    } catch {
-      if (!guard.current.isCurrent(token)) return;
-      setProfile(null);
-      setRoles([]);
-    }
-    if (guard.current.isCurrent(token)) setLoading(false);
-  }, []);
-
-  /** Applies a session change; a different user resets roles and holds `loading` until they are fetched. */
-  const applySession = useCallback(
-    (next: Session | null) => {
-      setSession(next);
-      const nextId = next?.user?.id ?? null;
-      if (!needsReload(loadedUserId.current, nextId)) return;
-      // Drop any in-flight load for the previous user and block routing until the new roles arrive.
-      guard.current.invalidate();
-      loadedUserId.current = null;
-      setProfile(null);
-      setRoles([]);
-      if (nextId) setLoading(true);
-      // Defer backend reads out of the auth callback.
-      setTimeout(() => {
-        void load(next);
-      }, 0);
-    },
-    [load],
+  const [store] = useState(() => createAuthStore<Session, Profile>({ fetchUser }));
+  const { session, profile, roles, loading } = useSyncExternalStore(
+    store.subscribe,
+    store.getState,
+    store.getState,
   );
 
   useEffect(() => {
     let active = true;
-    const loadGuard = guard.current;
 
     const { data: subscription } = supabase.auth.onAuthStateChange((_event, next) => {
-      if (!active) return;
-      applySession(next);
+      if (active) store.applySession(next);
     });
 
     void supabase.auth.getSession().then(({ data }) => {
-      if (!active) return;
-      applySession(data.session);
+      if (active) store.applySession(data.session);
     });
 
     return () => {
       active = false;
-      loadGuard.invalidate();
       subscription.subscription.unsubscribe();
     };
-  }, [applySession]);
+  }, [store]);
 
   const value = useMemo<AuthContextValue>(
     () => ({
@@ -154,17 +110,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       hasRole: (role: AppRole) => roles.includes(role),
       refreshProfile: async () => {
         const { data } = await supabase.auth.getSession();
-        await load(data.session);
+        await store.reload(data.session);
       },
       signOut: async () => {
-        guard.current.invalidate();
-        loadedUserId.current = null;
-        setProfile(null);
-        setRoles([]);
+        store.clear();
         await supabase.auth.signOut();
       },
     }),
-    [session, profile, roles, loading, load],
+    [session, profile, roles, loading, store],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

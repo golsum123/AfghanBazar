@@ -3,7 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { postLoginDestination } from "@/lib/auth-flow";
+import { resolveDestination } from "@/lib/auth-store";
 import { PublicLayout } from "@/layouts/public-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,6 +45,7 @@ function AuthPage() {
   const { redirect } = Route.useSearch();
   const navigate = useNavigate();
   const { session, roles, loading: authLoading } = useAuth();
+  const destination = resolveDestination({ session, roles, loading: authLoading }, redirect);
 
   const [mode, setMode] = useState("signin");
   const [busy, setBusy] = useState(false);
@@ -59,11 +60,9 @@ function AuthPage() {
   const [pendingConfirm, setPendingConfirm] = useState(false);
 
   useEffect(() => {
-    // Wait until roles are loaded so admins and customers get the right destination.
-    if (!authLoading && session) {
-      void navigate({ to: postLoginDestination(roles, redirect), replace: true });
-    }
-  }, [authLoading, session, roles, navigate, redirect]);
+    // Null until the session and its roles have both settled.
+    if (destination) void navigate({ to: destination, replace: true });
+  }, [destination, navigate]);
 
   async function handleSignIn(event: React.FormEvent) {
     event.preventDefault();
